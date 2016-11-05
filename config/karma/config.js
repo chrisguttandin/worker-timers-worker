@@ -48,11 +48,10 @@ module.exports = function (config) {
                     browserName: 'chrome',
                     platform: 'OS X 10.11'
                 },
-                FirefoxDeveloperSauceLabs: {
+                FirefoxSauceLabs: {
                     base: 'SauceLabs',
                     browserName: 'firefox',
-                    platform: 'OS X 10.11',
-                    version: 'dev'
+                    platform: 'OS X 10.11'
                 },
                 SafariSauceLabs: {
                     base: 'SauceLabs',

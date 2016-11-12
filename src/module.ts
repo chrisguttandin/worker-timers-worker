@@ -37,15 +37,12 @@ self.addEventListener('message', ({ data: { action, delay, id, now: nowInMainThr
 
         // @todo Maybe throw an error.
     } else if (action === 'set') {
-        let expected,
-            now;
+        let now;
 
         if ('performance' in self) {
-            let elapsed,
-                nowInWorker;
+            const nowInWorker = performance.now();
 
-            nowInWorker = performance.now();
-            elapsed = Math.max(0, nowInWorker - nowInMainThread);
+            const elapsed = Math.max(0, nowInWorker - nowInMainThread);
 
             delay -= elapsed;
             now = nowInWorker;
@@ -53,7 +50,7 @@ self.addEventListener('message', ({ data: { action, delay, id, now: nowInMainThr
             now = Date.now();
         }
 
-        expected = now + delay;
+        const expected = now + delay;
 
         if (type === 'interval') {
             scheduledIntervalIdentifiers.set(

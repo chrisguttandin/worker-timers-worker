@@ -32,7 +32,7 @@
     "rollup-plugin-babel": "^2.6.1",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
-    "tslint-config-holy-grail": "^2.0.1",
+    "tslint-config-holy-grail": "^3.0.1",
     "typescript": "^2.0.7",
     "webpack": "^2.1.0-beta.25"
   },

@@ -1,4 +1,6 @@
 *
+!build/
+build/*
 !build/es5/
 !build/es2015/
 !src/

@@ -1,11 +1,12 @@
 describe('module', () => {
 
     let id;
+
     let worker;
 
     beforeEach(() => {
         id = 0;
-        worker = new Worker('base/src/module.js');
+        worker = new Worker('base/src/module.ts');
     });
 
     describe('clearInterval()', () => {

@@ -20,8 +20,22 @@ module.exports = function (config) {
         ],
 
         preprocessors: {
-            'src/**/*.ts': 'typescript',
+            'src/**/*.ts': 'webpack',
             'test/unit/**/*.js': 'webpack'
+        },
+
+        webpack: {
+            module: {
+                loaders: [
+                    {
+                        loader: 'ts-loader',
+                        test: /\.ts?$/
+                    }
+                ]
+            },
+            resolve: {
+                extensions: [ '.js', '.ts' ]
+            }
         },
 
         webpackMiddleware: {

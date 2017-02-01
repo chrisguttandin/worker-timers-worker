@@ -19,7 +19,7 @@ describe('module', () => {
 
         it('should not call the function after clearing the interval', (done) => {
             worker.addEventListener('message', () => {
-                throw 'this should never be called';
+                throw new Error('this should never be called');
             });
 
             worker.postMessage({
@@ -45,7 +45,7 @@ describe('module', () => {
 
             worker.addEventListener('message', () => {
                 if (hasBeenCalledOnce) {
-                    throw 'this should never be called';
+                    throw new Error('this should never be called');
                 }
 
                 hasBeenCalledOnce = true;
@@ -81,7 +81,7 @@ describe('module', () => {
 
         it('should not call the function after clearing the timeout', (done) => {
             worker.addEventListener('message', () => {
-                throw 'this should never be called';
+                throw new Error('this should never be called');
             });
 
             worker.postMessage({

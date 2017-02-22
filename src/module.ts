@@ -1,3 +1,7 @@
+import { IWorkerTimersEvent } from './interfaces/worker-timers-event';
+
+export { IWorkerTimersEvent };
+
 const scheduledIntervalIdentifiers: Map<number, number> = new Map();
 const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
 
@@ -5,13 +9,13 @@ const setTimeoutCallback = (identifiers, id, expected, data) => {
     const now = ('performance' in self) ? performance.now() : Date.now();
 
     if (now > expected) {
-        self.postMessage(data);
+        postMessage(data);
     } else {
         identifiers.set(id, setTimeout(setTimeoutCallback, (expected - now), identifiers, id, expected, data));
     }
 };
 
-self.addEventListener('message', ({ data: { action, delay, id, now: nowInMainThread, type } }) => {
+addEventListener('message', ({ data: { action, delay, id, now: nowInMainThread, type } }: IWorkerTimersEvent) => {
     if (action === 'clear') {
         let identifier;
 

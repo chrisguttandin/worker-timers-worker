@@ -1,6 +1,3 @@
-// @todo Remove this fix once https://github.com/Microsoft/TSJS-lib-generator/issues/163 is resolved.
-declare const performance: any;
-
 const scheduledIntervalIdentifiers: Map<number, number> = new Map();
 const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
 

@@ -5,13 +5,13 @@ export { IWorkerTimersEvent };
 const scheduledIntervalIdentifiers: Map<number, number> = new Map();
 const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
 
-const setTimeoutCallback = (identifiers, id, expected, data) => {
+const setTimeoutCallback = (identifiers: Map<number, number>, id: number, expected: number, type: string) => {
     const now = ('performance' in self) ? performance.now() : Date.now();
 
     if (now > expected) {
-        postMessage(data);
+        postMessage({ id, type });
     } else {
-        identifiers.set(id, setTimeout(setTimeoutCallback, (expected - now), identifiers, id, expected, data));
+        identifiers.set(id, setTimeout(setTimeoutCallback, (expected - now), identifiers, id, expected, type));
     }
 };
 
@@ -55,11 +55,11 @@ addEventListener('message', ({ data: { action, delay, id, now: nowInMainThread, 
 
         if (type === 'interval') {
             scheduledIntervalIdentifiers.set(
-                id, setTimeout(setTimeoutCallback, delay, scheduledIntervalIdentifiers, id, expected, { id, type })
+                id, setTimeout(setTimeoutCallback, delay, scheduledIntervalIdentifiers, id, expected, type)
             );
         } else if (type === 'timeout') {
             scheduledTimeoutIdentifiers.set(
-                id, setTimeout(setTimeoutCallback, delay, scheduledTimeoutIdentifiers, id, expected, { id, type })
+                id, setTimeout(setTimeoutCallback, delay, scheduledTimeoutIdentifiers, id, expected, type)
             );
         }
 

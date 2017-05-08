@@ -7,6 +7,8 @@ export const clearScheduledInterval = (id: number) => {
     if (identifier !== undefined) {
         clearTimeout(identifier);
         scheduledIntervalIdentifiers.delete(id);
+    } else {
+        throw new Error(`There is no interval scheduled with the given id "${ id }".`);
     }
 };
 
@@ -16,6 +18,8 @@ export const clearScheduledTimeout = (id: number) => {
     if (identifier !== undefined) {
         clearTimeout(identifier);
         scheduledTimeoutIdentifiers.delete(id);
+    } else {
+        throw new Error(`There is no timeout scheduled with the given id "${ id }".`);
     }
 };
 

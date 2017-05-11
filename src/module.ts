@@ -1,10 +1,10 @@
 import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
-import { IClearResponse, IWorkerTimersBrokerEvent } from './interfaces';
+import { IClearResponse, IBrokerEvent, IErrorNotification, IErrorResponse } from './interfaces';
 
 export * from './interfaces';
 export * from './types';
 
-addEventListener('message', ({ data }: IWorkerTimersBrokerEvent) => {
+addEventListener('message', ({ data }: IBrokerEvent) => {
     try {
         if (data.method === 'clear') {
             const { id, params: { timerId, timerType } } = data;
@@ -34,10 +34,12 @@ addEventListener('message', ({ data }: IWorkerTimersBrokerEvent) => {
             throw new Error(`The given method "${ (<any> data).method }" is not supported`);
         }
     } catch (err) {
-        postMessage({
-            err: {
+        postMessage(<IErrorNotification | IErrorResponse> {
+            error: {
                 message: err.message
-            }
+            },
+            id: data.id,
+            result: null
         });
     }
 });

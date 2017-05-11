@@ -1,4 +1,4 @@
-import { ICallRequest } from '../interfaces';
+import { ICallNotification } from '../interfaces';
 
 const scheduledIntervalIdentifiers: Map<number, number> = new Map();
 const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
@@ -48,7 +48,7 @@ const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, e
     const now = ('performance' in self) ? performance.now() : Date.now();
 
     if (now > expected) {
-        postMessage(<ICallRequest> { method: 'call', params: { timerId, timerType } });
+        postMessage(<ICallNotification> { id: null, method: 'call', params: { timerId, timerType } });
     } else {
         identifiers.set(timerId, setTimeout(setTimeoutCallback, (expected - now), identifiers, timerId, expected, timerType));
     }

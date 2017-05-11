@@ -1,5 +1,5 @@
 import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
-import { INotification, IWorkerTimersBrokerEvent } from './interfaces';
+import { IClearResponse, IWorkerTimersBrokerEvent } from './interfaces';
 
 export * from './interfaces';
 export * from './types';
@@ -12,11 +12,11 @@ addEventListener('message', ({ data }: IWorkerTimersBrokerEvent) => {
             if (timerType === 'interval') {
                 clearScheduledInterval(timerId);
 
-                postMessage(<INotification> { id });
+                postMessage(<IClearResponse> { error: null, id });
             } else if (timerType === 'timeout') {
                 clearScheduledTimeout(timerId);
 
-                postMessage(<INotification> { id });
+                postMessage(<IClearResponse> { error: null, id });
             } else {
                 throw new Error(`The given type "${ timerType }" is not supported`);
             }

@@ -1,3 +1,3 @@
-import { ICallRequest, INotification } from '../interfaces';
+import { ICallNotification, IClearResponse } from '../interfaces';
 
-export type TWorkerTimersWorkerMessage = ICallRequest | INotification;
+export type TWorkerTimersWorkerMessage = ICallNotification | IClearResponse;

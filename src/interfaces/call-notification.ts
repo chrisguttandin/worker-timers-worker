@@ -1,14 +1,12 @@
 import { TTimerType } from '../types';
 
-export interface ISetRequest {
+export interface ICallNotification {
 
-    method: 'set';
+    id: null;
+
+    method: 'call';
 
     params: {
-
-        delay: number;
-
-        now: number;
 
         timerId: number;
 

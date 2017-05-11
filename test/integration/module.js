@@ -20,20 +20,19 @@ describe('module', () => {
             let isCleared = false;
 
             worker.addEventListener('message', ({ data }) => {
-                if (!isCleared) {
-                    if (data.id === 82) {
-                        expect(data).to.deep.equal({ id: 82 });
+                if (!isCleared && data.id === null) {
+                    expect(data).to.deep.equal({
+                        id: null,
+                        method: 'call',
+                        params: { timerId, timerType }
+                    });
+                } else if (!isCleared && data.id === 82) {
+                    expect(data).to.deep.equal({ error: null, id: 82 });
 
-                        isCleared = true;
+                    isCleared = true;
 
-                        // Wait 200ms to be sure the function never gets called.
-                        setTimeout(done, 200);
-                    } else {
-                        expect(data).to.deep.equal({
-                            method: 'call',
-                            params: { timerId, timerType }
-                        });
-                    }
+                    // Wait 200ms to be sure the function never gets called.
+                    setTimeout(done, 200);
                 } else {
                     throw new Error('this should never be called');
                 }
@@ -61,8 +60,9 @@ describe('module', () => {
             let hasBeenCalledOnce = false;
 
             worker.addEventListener('message', ({ data }) => {
-                if (data.method === 'call' && !hasBeenCalledOnce) {
+                if (!hasBeenCalledOnce && data.method === 'call') {
                     expect(data).to.deep.equal({
+                        id: null,
                         method: 'call',
                         params: { timerId, timerType }
                     });
@@ -75,7 +75,7 @@ describe('module', () => {
                         params: { timerId, timerType }
                     });
                 } else if (data.id === 82) {
-                    expect(data).to.deep.equal({ id: 82 });
+                    expect(data).to.deep.equal({ error: null, id: 82 });
 
                     // Wait 200ms to be sure the function never gets called.
                     setTimeout(done, 200);
@@ -112,7 +112,7 @@ describe('module', () => {
             worker.addEventListener('message', ({ data }) => {
                 if (!isCleared) {
                     if (data.id === 82) {
-                        expect(data).to.deep.equal({ id: 82 });
+                        expect(data).to.deep.equal({ error: null, id: 82 });
 
                         isCleared = true;
 
@@ -120,6 +120,7 @@ describe('module', () => {
                         setTimeout(done, 200);
                     } else {
                         expect(data).to.deep.equal({
+                            id: null,
                             method: 'call',
                             params: { timerId, timerType }
                         });
@@ -178,6 +179,7 @@ describe('module', () => {
                 worker.removeEventListener('message', onMessage);
 
                 expect(data).to.deep.equal({
+                    id: null,
                     method: 'call',
                     params: { timerId, timerType }
                 });
@@ -234,6 +236,7 @@ describe('module', () => {
                 worker.removeEventListener('message', onMessage);
 
                 expect(data).to.deep.equal({
+                    id: null,
                     method: 'call',
                     params: { timerId, timerType }
                 });

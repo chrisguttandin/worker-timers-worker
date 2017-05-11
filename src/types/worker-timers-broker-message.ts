@@ -1,3 +1,3 @@
-import { IClearRequest, ISetRequest } from '../interfaces';
+import { IClearRequest, ISetNotification } from '../interfaces';
 
-export type TWorkerTimersBrokerMessage = IClearRequest | ISetRequest;
+export type TWorkerTimersBrokerMessage = IClearRequest | ISetNotification;

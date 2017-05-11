@@ -1,28 +1,37 @@
-import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
-import { IWorkerTimersEvent } from './interfaces/worker-timers-event';
+import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
+import { INotification, IWorkerTimersBrokerEvent } from './interfaces';
 
-export { IWorkerTimersEvent };
+export * from './interfaces';
+export * from './types';
 
-addEventListener('message', ({ data: { action, delay, id, now, type } }: IWorkerTimersEvent) => {
+addEventListener('message', ({ data }: IWorkerTimersBrokerEvent) => {
     try {
-        if (action === 'clear') {
-            if (type === 'interval') {
-                clearScheduledInterval(id);
-            } else if (type === 'timeout') {
-                clearScheduledTimeout(id);
+        if (data.method === 'clear') {
+            const { id, params: { timerId, timerType } } = data;
+
+            if (timerType === 'interval') {
+                clearScheduledInterval(timerId);
+
+                postMessage(<INotification> { id });
+            } else if (timerType === 'timeout') {
+                clearScheduledTimeout(timerId);
+
+                postMessage(<INotification> { id });
             } else {
-                throw new Error(`The given type "${ type }" is not supported`);
+                throw new Error(`The given type "${ timerType }" is not supported`);
             }
-        } else if (action === 'set') {
-            if (type === 'interval') {
-                scheduleInterval(delay, id, now);
-            } else if (type === 'timeout') {
-                scheduleTimeout(delay, id, now);
+        } else if (data.method === 'set') {
+            const { params: { delay, now, timerId, timerType } } = data;
+
+            if (timerType === 'interval') {
+                scheduleInterval(delay, timerId, now);
+            } else if (timerType === 'timeout') {
+                scheduleTimeout(delay, timerId, now);
             } else {
-                throw new Error(`The given type "${ type }" is not supported`);
+                throw new Error(`The given type "${ timerType }" is not supported`);
             }
         } else {
-            throw new Error(`The given action "${ action }" is not supported`);
+            throw new Error(`The given method "${ (<any> data).method }" is not supported`);
         }
     } catch (err) {
         postMessage({

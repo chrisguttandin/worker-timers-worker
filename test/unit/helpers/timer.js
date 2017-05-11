@@ -6,32 +6,32 @@ describe('timer', () => {
 
         describe('with a scheduled interval', () => {
 
-            let id;
             let now;
+            let timerId;
 
             beforeEach(() => {
-                id = 17;
                 now = 1000000;
+                timerId = 17;
 
-                scheduleInterval(1000, id, now);
+                scheduleInterval(1000, timerId, now);
             });
 
             it('should clear the interval', () => {
-                clearScheduledInterval(id);
+                clearScheduledInterval(timerId);
             });
 
         });
 
         describe('without a scheduled interval', () => {
 
-            let id;
+            let timerId;
 
             beforeEach(() => {
-                id = 21;
+                timerId = 21;
             });
 
             it('should throw an error', () => {
-                expect(() => clearScheduledInterval(id)).to.throw(Error, `There is no interval scheduled with the given id "${ id }".`);
+                expect(() => clearScheduledInterval(timerId)).to.throw(Error, `There is no interval scheduled with the given id "${ timerId }".`);
             });
 
         });
@@ -42,32 +42,32 @@ describe('timer', () => {
 
         describe('with a scheduled timeout', () => {
 
-            let id;
             let now;
+            let timerId;
 
             beforeEach(() => {
-                id = 17;
                 now = 1000000;
+                timerId = 17;
 
-                scheduleTimeout(1000, id, now);
+                scheduleTimeout(1000, timerId, now);
             });
 
             it('should clear the timeout', () => {
-                clearScheduledTimeout(id);
+                clearScheduledTimeout(timerId);
             });
 
         });
 
         describe('without a scheduled timeout', () => {
 
-            let id;
+            let timerId;
 
             beforeEach(() => {
-                id = 21;
+                timerId = 21;
             });
 
             it('should throw an error', () => {
-                expect(() => clearScheduledTimeout(id)).to.throw(Error, `There is no timeout scheduled with the given id "${ id }".`);
+                expect(() => clearScheduledTimeout(timerId)).to.throw(Error, `There is no timeout scheduled with the given id "${ timerId }".`);
             });
 
         });

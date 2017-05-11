@@ -1,25 +1,27 @@
+import { ICallRequest } from '../interfaces';
+
 const scheduledIntervalIdentifiers: Map<number, number> = new Map();
 const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
 
-export const clearScheduledInterval = (id: number) => {
-    const identifier = scheduledIntervalIdentifiers.get(id);
+export const clearScheduledInterval = (timerId: number) => {
+    const identifier = scheduledIntervalIdentifiers.get(timerId);
 
     if (identifier !== undefined) {
         clearTimeout(identifier);
-        scheduledIntervalIdentifiers.delete(id);
+        scheduledIntervalIdentifiers.delete(timerId);
     } else {
-        throw new Error(`There is no interval scheduled with the given id "${ id }".`);
+        throw new Error(`There is no interval scheduled with the given id "${ timerId }".`);
     }
 };
 
-export const clearScheduledTimeout = (id: number) => {
-    const identifier = scheduledTimeoutIdentifiers.get(id);
+export const clearScheduledTimeout = (timerId: number) => {
+    const identifier = scheduledTimeoutIdentifiers.get(timerId);
 
     if (identifier !== undefined) {
         clearTimeout(identifier);
-        scheduledTimeoutIdentifiers.delete(id);
+        scheduledTimeoutIdentifiers.delete(timerId);
     } else {
-        throw new Error(`There is no timeout scheduled with the given id "${ id }".`);
+        throw new Error(`There is no timeout scheduled with the given id "${ timerId }".`);
     }
 };
 
@@ -42,32 +44,32 @@ const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: num
     return { delay, expected };
 };
 
-const setTimeoutCallback = (identifiers: Map<number, number>, id: number, expected: number, type: string) => {
+const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
     const now = ('performance' in self) ? performance.now() : Date.now();
 
     if (now > expected) {
-        postMessage({ id, type });
+        postMessage(<ICallRequest> { method: 'call', params: { timerId, timerType } });
     } else {
-        identifiers.set(id, setTimeout(setTimeoutCallback, (expected - now), identifiers, id, expected, type));
+        identifiers.set(timerId, setTimeout(setTimeoutCallback, (expected - now), identifiers, timerId, expected, timerType));
     }
 };
 
-export const scheduleInterval = (delay: number, id: number, nowInMainThread: number) => {
+export const scheduleInterval = (delay: number, timerId: number, nowInMainThread: number) => {
     let expected;
 
     ({ delay, expected } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread));
 
     scheduledIntervalIdentifiers.set(
-        id, setTimeout(setTimeoutCallback, delay, scheduledIntervalIdentifiers, id, expected, 'interval')
+        timerId, setTimeout(setTimeoutCallback, delay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
     );
 };
 
-export const scheduleTimeout = (delay: number, id: number, nowInMainThread: number) => {
+export const scheduleTimeout = (delay: number, timerId: number, nowInMainThread: number) => {
     let expected;
 
     ({ delay, expected } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread));
 
     scheduledTimeoutIdentifiers.set(
-        id, setTimeout(setTimeoutCallback, delay, scheduledTimeoutIdentifiers, id, expected, 'timeout')
+        timerId, setTimeout(setTimeoutCallback, delay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
     );
 };

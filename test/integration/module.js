@@ -1,142 +1,205 @@
 describe('module', () => {
 
-    let id;
-
+    let timerId;
     let worker;
 
     beforeEach(() => {
-        id = 0;
+        timerId = 0;
         worker = new Worker('base/src/module.ts');
     });
 
     describe('clearInterval()', () => {
 
-        let type;
+        let timerType;
 
         beforeEach(() => {
-            type = 'interval';
+            timerType = 'interval';
         });
 
-        it('should not call the function after clearing the interval', (done) => {
-            worker.addEventListener('message', () => {
-                throw new Error('this should never be called');
-            });
+        it('should not send messages after clearing the interval', (done) => {
+            let isCleared = false;
 
-            worker.postMessage({
-                action: 'set',
-                delay: 100,
-                id,
-                now: performance.now(),
-                type
-            });
+            worker.addEventListener('message', ({ data }) => {
+                if (!isCleared) {
+                    if (data.id === 82) {
+                        expect(data).to.deep.equal({ id: 82 });
 
-            worker.postMessage({
-                action: 'clear',
-                id,
-                type
-            });
+                        isCleared = true;
 
-            // Wait 200ms to be sure the function never gets called.
-            setTimeout(done, 200);
-        });
-
-        it('should not call the function anymore after clearing the interval after the first callback', (done) => {
-            let hasBeenCalledOnce = false;
-
-            worker.addEventListener('message', () => {
-                if (hasBeenCalledOnce) {
+                        // Wait 200ms to be sure the function never gets called.
+                        setTimeout(done, 200);
+                    } else {
+                        expect(data).to.deep.equal({
+                            method: 'call',
+                            params: { timerId, timerType }
+                        });
+                    }
+                } else {
                     throw new Error('this should never be called');
                 }
-
-                hasBeenCalledOnce = true;
-
-                worker.postMessage({
-                    action: 'clear',
-                    id,
-                    type
-                });
             });
 
             worker.postMessage({
-                action: 'set',
-                delay: 50,
-                id,
-                now: performance.now(),
-                type
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.now(),
+                    timerId,
+                    timerType
+                }
             });
 
-            // Wait 200ms to be sure the function gets not called anymore.
-            setTimeout(done, 200);
+            worker.postMessage({
+                id: 82,
+                method: 'clear',
+                params: { timerId, timerType }
+            });
+        });
+
+        it('should not send messages after clearing the interval after the first callback', (done) => {
+            let hasBeenCalledOnce = false;
+
+            worker.addEventListener('message', ({ data }) => {
+                if (data.method === 'call' && !hasBeenCalledOnce) {
+                    expect(data).to.deep.equal({
+                        method: 'call',
+                        params: { timerId, timerType }
+                    });
+
+                    hasBeenCalledOnce = true;
+
+                    worker.postMessage({
+                        id: 82,
+                        method: 'clear',
+                        params: { timerId, timerType }
+                    });
+                } else if (data.id === 82) {
+                    expect(data).to.deep.equal({ id: 82 });
+
+                    // Wait 200ms to be sure the function never gets called.
+                    setTimeout(done, 200);
+                } else {
+                    throw new Error('this should never be called');
+                }
+            });
+
+            worker.postMessage({
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.now(),
+                    timerId,
+                    timerType
+                }
+            });
         });
 
     });
 
     describe('clearTimeout()', () => {
 
-        let type;
+        let timerType;
 
         beforeEach(() => {
-            type = 'timeout';
+            timerType = 'timeout';
         });
 
         it('should not call the function after clearing the timeout', (done) => {
-            worker.addEventListener('message', () => {
-                throw new Error('this should never be called');
+            let isCleared = false;
+
+            worker.addEventListener('message', ({ data }) => {
+                if (!isCleared) {
+                    if (data.id === 82) {
+                        expect(data).to.deep.equal({ id: 82 });
+
+                        isCleared = true;
+
+                        // Wait 200ms to be sure the function never gets called.
+                        setTimeout(done, 200);
+                    } else {
+                        expect(data).to.deep.equal({
+                            method: 'call',
+                            params: { timerId, timerType }
+                        });
+                    }
+                } else {
+                    throw new Error('this should never be called');
+                }
             });
 
             worker.postMessage({
-                action: 'set',
-                delay: 100,
-                id,
-                now: performance.now(),
-                type
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.now(),
+                    timerId,
+                    timerType
+                }
             });
 
             worker.postMessage({
-                action: 'clear',
-                id,
-                type
+                id: 82,
+                method: 'clear',
+                params: { timerId, timerType }
             });
-
-            // Wait 200ms to be sure the function never gets called.
-            setTimeout(done, 200);
         });
 
     });
 
     describe('setInterval()', () => {
 
-        let type;
+        let timerType;
 
-        afterEach(() => {
+        afterEach((done) => {
+            worker.addEventListener('message', ({ data }) => {
+                if (data.id === 82) {
+                    done();
+                }
+            });
+
             worker.postMessage({
-                action: 'clear',
-                id,
-                type
+                id: 82,
+                method: 'clear',
+                params: { timerId, timerType }
             });
         });
 
         beforeEach(() => {
-            type = 'interval';
+            timerType = 'interval';
         });
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
 
-            worker.addEventListener('message', () => {
+            const onMessage = ({ data }) => {
+                worker.removeEventListener('message', onMessage);
+
+                expect(data).to.deep.equal({
+                    method: 'call',
+                    params: { timerId, timerType }
+                });
+
                 const elapsed = performance.now() - before;
 
                 expect(elapsed).to.be.at.least(100);
 
                 done();
-            });
+            };
+
+            worker.addEventListener('message', onMessage);
 
             worker.postMessage({
-                action: 'set',
-                delay: 100,
-                id,
-                now: performance.now(),
-                type
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.now(),
+                    timerId,
+                    timerType
+                }
             });
         });
 
@@ -144,37 +207,55 @@ describe('module', () => {
 
     describe('setTimeout()', () => {
 
-        let type;
+        let timerType;
 
-        afterEach(() => {
+        afterEach((done) => {
+            worker.addEventListener('message', ({ data }) => {
+                if (data.id === 82) {
+                    done();
+                }
+            });
+
             worker.postMessage({
-                action: 'clear',
-                id,
-                type
+                id: 82,
+                method: 'clear',
+                params: { timerId, timerType }
             });
         });
 
         beforeEach(() => {
-            type = 'timeout';
+            timerType = 'timeout';
         });
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
 
-            worker.addEventListener('message', () => {
+            const onMessage = ({ data }) => {
+                worker.removeEventListener('message', onMessage);
+
+                expect(data).to.deep.equal({
+                    method: 'call',
+                    params: { timerId, timerType }
+                });
+
                 const elapsed = performance.now() - before;
 
                 expect(elapsed).to.be.at.least(100);
 
                 done();
-            });
+            };
+
+            worker.addEventListener('message', onMessage);
 
             worker.postMessage({
-                action: 'set',
-                delay: 100,
-                id,
-                now: performance.now(),
-                type
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.now(),
+                    timerId,
+                    timerType
+                }
             });
         });
 

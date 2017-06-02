@@ -1,7 +1,5 @@
 # worker-timers-worker
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/chrisguttandin/worker-timers-worker.svg)](https://greenkeeper.io/)
-
 **The worker which is used by the worker-timers package.**
 
 [![tests](https://img.shields.io/travis/chrisguttandin/worker-timers-worker/master.svg?style=flat-square)](https://travis-ci.org/chrisguttandin/worker-timers-worker)

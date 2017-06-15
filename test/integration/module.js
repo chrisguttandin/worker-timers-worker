@@ -174,7 +174,6 @@ describe('module', () => {
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
-
             const onMessage = ({ data }) => {
                 worker.removeEventListener('message', onMessage);
 
@@ -231,7 +230,6 @@ describe('module', () => {
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
-
             const onMessage = ({ data }) => {
                 worker.removeEventListener('message', onMessage);
 

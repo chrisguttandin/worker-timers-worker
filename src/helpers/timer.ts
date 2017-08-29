@@ -27,21 +27,22 @@ export const clearScheduledTimeout = (timerId: number) => {
 
 const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: number) => {
     let now: number;
+    let remainingDelay: number;
 
     if ('performance' in self) {
         const nowInWorker = performance.now();
-
         const elapsed = Math.max(0, nowInWorker - nowInMainThread);
 
-        delay -= elapsed;
         now = nowInWorker;
+        remainingDelay = delay - elapsed;
     } else {
         now = Date.now();
+        remainingDelay = delay;
     }
 
-    const expected = now + delay;
+    const expected = now + remainingDelay;
 
-    return { delay, expected };
+    return { expected, remainingDelay };
 };
 
 const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
@@ -55,21 +56,17 @@ const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, e
 };
 
 export const scheduleInterval = (delay: number, timerId: number, nowInMainThread: number) => {
-    let expected;
-
-    ({ delay, expected } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread));
+    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
 
     scheduledIntervalIdentifiers.set(
-        timerId, setTimeout(setTimeoutCallback, delay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
+        timerId, setTimeout(setTimeoutCallback, remainingDelay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
     );
 };
 
 export const scheduleTimeout = (delay: number, timerId: number, nowInMainThread: number) => {
-    let expected;
-
-    ({ delay, expected } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread));
+    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
 
     scheduledTimeoutIdentifiers.set(
-        timerId, setTimeout(setTimeoutCallback, delay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
+        timerId, setTimeout(setTimeoutCallback, remainingDelay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
     );
 };

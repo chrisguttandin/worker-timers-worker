@@ -66,6 +66,7 @@
   "types": "build/es2015/module.d.ts",
   "version": "4.0.2",
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "tslib": "^1.7.1"
   }
 }

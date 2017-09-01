@@ -4,7 +4,7 @@ export default {
     input: 'build/es2015/module.js',
     output: {
         file: 'build/es5/bundle.js',
-        format: 'iife',
+        format: 'umd',
         name: 'workerTimersWorker'
     },
     plugins: [

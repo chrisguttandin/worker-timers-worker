@@ -4,6 +4,8 @@ module.exports = (config) => {
 
         basePath: '../../',
 
+        browserNoActivityTimeout: 20000,
+
         concurrency: 2,
 
         files: [

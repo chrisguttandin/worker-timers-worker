@@ -16,7 +16,9 @@ describe('module', () => {
             timerType = 'interval';
         });
 
-        it('should not send messages after clearing the interval', (done) => {
+        it('should not send messages after clearing the interval', function (done) {
+            this.timeout(4000);
+
             let isCleared = false;
 
             worker.addEventListener('message', ({ data }) => {
@@ -56,7 +58,9 @@ describe('module', () => {
             });
         });
 
-        it('should not send messages after clearing the interval after the first callback', (done) => {
+        it('should not send messages after clearing the interval after the first callback', function (done) {
+            this.timeout(4000);
+
             let hasBeenCalledOnce = false;
 
             worker.addEventListener('message', ({ data }) => {
@@ -106,7 +110,9 @@ describe('module', () => {
             timerType = 'timeout';
         });
 
-        it('should not call the function after clearing the timeout', (done) => {
+        it('should not call the function after clearing the timeout', function (done) {
+            this.timeout(4000);
+
             let isCleared = false;
 
             worker.addEventListener('message', ({ data }) => {

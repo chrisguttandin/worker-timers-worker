@@ -1,5 +1,5 @@
 import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
-import { IClearResponse, IBrokerEvent, IErrorNotification, IErrorResponse } from './interfaces';
+import { IBrokerEvent, IClearResponse, IErrorNotification, IErrorResponse } from './interfaces';
 
 export * from './interfaces';
 export * from './types';

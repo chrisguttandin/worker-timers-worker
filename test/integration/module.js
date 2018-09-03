@@ -5,7 +5,7 @@ describe('module', () => {
 
     beforeEach(() => {
         timerId = 0;
-        worker = new Worker('base/src/module.ts');
+        worker = new Worker('base/src/module.js');
     });
 
     describe('clearInterval()', () => {

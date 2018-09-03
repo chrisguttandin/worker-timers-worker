@@ -56,7 +56,7 @@ module.exports = (config) => {
         },
 
         preprocessors: {
-            'src/**/*.ts': 'webpack',
+            'src/**/!(*.d).ts': 'webpack',
             'test/unit/**/*.js': 'webpack'
         },
 

@@ -1,5 +1,6 @@
 {
   "author": "Christoph Guttandin",
+  "browser": "build/es5/bundle.js",
   "bugs": {
     "url": "https://github.com/chrisguttandin/worker-timers-worker/issues"
   },

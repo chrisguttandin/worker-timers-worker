@@ -1,5 +1,4 @@
 describe('module', () => {
-
     let timerId;
     let worker;
 
@@ -9,7 +8,6 @@ describe('module', () => {
     });
 
     describe('clearInterval()', () => {
-
         let timerType;
 
         beforeEach(() => {
@@ -99,11 +97,9 @@ describe('module', () => {
                 }
             });
         });
-
     });
 
     describe('clearTimeout()', () => {
-
         let timerType;
 
         beforeEach(() => {
@@ -153,11 +149,9 @@ describe('module', () => {
                 params: { timerId, timerType }
             });
         });
-
     });
 
     describe('setInterval()', () => {
-
         let timerType;
 
         afterEach((done) => {
@@ -209,11 +203,9 @@ describe('module', () => {
                 }
             });
         });
-
     });
 
     describe('setTimeout()', () => {
-
         let timerType;
 
         afterEach((done) => {
@@ -265,7 +257,5 @@ describe('module', () => {
                 }
             });
         });
-
     });
-
 });

@@ -10,7 +10,7 @@ export const clearScheduledInterval = (timerId: number) => {
         clearTimeout(identifier);
         scheduledIntervalIdentifiers.delete(timerId);
     } else {
-        throw new Error(`There is no interval scheduled with the given id "${ timerId }".`);
+        throw new Error(`There is no interval scheduled with the given id "${timerId}".`);
     }
 };
 
@@ -21,7 +21,7 @@ export const clearScheduledTimeout = (timerId: number) => {
         clearTimeout(identifier);
         scheduledTimeoutIdentifiers.delete(timerId);
     } else {
-        throw new Error(`There is no timeout scheduled with the given id "${ timerId }".`);
+        throw new Error(`There is no timeout scheduled with the given id "${timerId}".`);
     }
 };
 
@@ -46,12 +46,12 @@ const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: num
 };
 
 const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
-    const now = ('performance' in self) ? performance.now() : Date.now();
+    const now = 'performance' in self ? performance.now() : Date.now();
 
     if (now > expected) {
-        postMessage(<ICallNotification> { id: null, method: 'call', params: { timerId, timerType } });
+        postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });
     } else {
-        identifiers.set(timerId, setTimeout(setTimeoutCallback, (expected - now), identifiers, timerId, expected, timerType));
+        identifiers.set(timerId, setTimeout(setTimeoutCallback, expected - now, identifiers, timerId, expected, timerType));
     }
 };
 
@@ -59,7 +59,8 @@ export const scheduleInterval = (delay: number, timerId: number, nowInMainThread
     const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
 
     scheduledIntervalIdentifiers.set(
-        timerId, setTimeout(setTimeoutCallback, remainingDelay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
+        timerId,
+        setTimeout(setTimeoutCallback, remainingDelay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
     );
 };
 
@@ -67,6 +68,7 @@ export const scheduleTimeout = (delay: number, timerId: number, nowInMainThread:
     const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
 
     scheduledTimeoutIdentifiers.set(
-        timerId, setTimeout(setTimeoutCallback, remainingDelay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
+        timerId,
+        setTimeout(setTimeoutCallback, remainingDelay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
     );
 };

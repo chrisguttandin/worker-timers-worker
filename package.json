@@ -8,6 +8,12 @@
             "path": "cz-conventional-changelog"
         }
     },
+    "contributors": [
+        {
+            "email": "vac872089248@gmail.com",
+            "name": "Knissing"
+        }
+    ],
     "dependencies": {
         "@babel/runtime": "^7.11.2",
         "tslib": "^2.0.1"

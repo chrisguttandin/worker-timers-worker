@@ -28,17 +28,11 @@ export const clearScheduledTimeout = (timerId: number) => {
 const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: number) => {
     let now: number;
     let remainingDelay: number;
+    const nowInWorker = performance.now();
+    const elapsed = Math.max(0, nowInWorker - nowInMainThread);
 
-    if ('performance' in self) {
-        const nowInWorker = performance.now();
-        const elapsed = Math.max(0, nowInWorker - nowInMainThread);
-
-        now = nowInWorker;
-        remainingDelay = delay - elapsed;
-    } else {
-        now = Date.now();
-        remainingDelay = delay;
-    }
+    now = nowInWorker;
+    remainingDelay = delay - elapsed;
 
     const expected = now + remainingDelay;
 
@@ -46,7 +40,7 @@ const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: num
 };
 
 const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
-    const now = 'performance' in self ? performance.now() : Date.now();
+    const now = performance.now();
 
     if (now > expected) {
         postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });

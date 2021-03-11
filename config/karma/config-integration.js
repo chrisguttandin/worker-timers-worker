@@ -28,6 +28,8 @@ module.exports = (config) => {
             'test/integration/**/*.js': 'webpack'
         },
 
+        reporters: ['dots'],
+
         webpack: {
             mode: 'development',
             module: {

@@ -45,6 +45,8 @@ module.exports = (config) => {
             'test/unit/**/*.js': 'webpack'
         },
 
+        reporters: ['dots'],
+
         webpack: {
             mode: 'development',
             module: {

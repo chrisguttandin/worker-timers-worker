@@ -14,25 +14,27 @@ describe('module', () => {
             timerType = 'interval';
         });
 
-        it('should not send messages after clearing the interval', function (done) {
+        it('should not call the function after clearing the interval', function (done) {
             this.timeout(4000);
 
             let isCleared = false;
 
             worker.addEventListener('message', ({ data }) => {
-                if (!isCleared && data.id === null) {
-                    expect(data).to.deep.equal({
-                        id: null,
-                        method: 'call',
-                        params: { timerId, timerType }
-                    });
-                } else if (!isCleared && data.id === 82) {
-                    expect(data).to.deep.equal({ error: null, id: 82 });
+                if (!isCleared) {
+                    if (data.id === 82) {
+                        expect(data).to.deep.equal({ id: 82, result: true });
 
-                    isCleared = true;
+                        isCleared = true;
 
-                    // Wait 200ms to be sure the function never gets called.
-                    setTimeout(done, 200);
+                        // Wait 200ms to be sure the function never gets called.
+                        setTimeout(done, 200);
+                    } else {
+                        expect(data).to.deep.equal({
+                            id: null,
+                            method: 'call',
+                            params: { timerId, timerType }
+                        });
+                    }
                 } else {
                     done(new Error('This should never be called.'));
                 }
@@ -56,7 +58,7 @@ describe('module', () => {
             });
         });
 
-        it('should not send messages after clearing the interval after the first callback', function (done) {
+        it('should not allow clearing the interval after the callback', function (done) {
             this.timeout(4000);
 
             let hasBeenCalledOnce = false;
@@ -77,7 +79,7 @@ describe('module', () => {
                         params: { timerId, timerType }
                     });
                 } else if (data.id === 82) {
-                    expect(data).to.deep.equal({ error: null, id: 82 });
+                    expect(data).to.deep.equal({ id: 82, result: false });
 
                     // Wait 200ms to be sure the function never gets called.
                     setTimeout(done, 200);
@@ -114,7 +116,7 @@ describe('module', () => {
             worker.addEventListener('message', ({ data }) => {
                 if (!isCleared) {
                     if (data.id === 82) {
-                        expect(data).to.deep.equal({ error: null, id: 82 });
+                        expect(data).to.deep.equal({ id: 82, result: true });
 
                         isCleared = true;
 
@@ -149,24 +151,52 @@ describe('module', () => {
                 params: { timerId, timerType }
             });
         });
-    });
 
-    describe('setInterval()', () => {
-        let timerType;
+        it('should not allow clearing the timeout after the callback', function (done) {
+            this.timeout(4000);
 
-        afterEach((done) => {
+            let hasBeenCalledOnce = false;
+
             worker.addEventListener('message', ({ data }) => {
-                if (data.id === 82) {
-                    done();
+                if (!hasBeenCalledOnce && data.method === 'call') {
+                    expect(data).to.deep.equal({
+                        id: null,
+                        method: 'call',
+                        params: { timerId, timerType }
+                    });
+
+                    hasBeenCalledOnce = true;
+
+                    worker.postMessage({
+                        id: 82,
+                        method: 'clear',
+                        params: { timerId, timerType }
+                    });
+                } else if (data.id === 82) {
+                    expect(data).to.deep.equal({ id: 82, result: false });
+
+                    // Wait 200ms to be sure the function never gets called.
+                    setTimeout(done, 200);
+                } else {
+                    done(new Error('This should never be called.'));
                 }
             });
 
             worker.postMessage({
-                id: 82,
-                method: 'clear',
-                params: { timerId, timerType }
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    now: performance.timeOrigin + performance.now(),
+                    timerId,
+                    timerType
+                }
             });
         });
+    });
+
+    describe('setInterval()', () => {
+        let timerType;
 
         beforeEach(() => {
             timerType = 'interval';
@@ -207,20 +237,6 @@ describe('module', () => {
 
     describe('setTimeout()', () => {
         let timerType;
-
-        afterEach((done) => {
-            worker.addEventListener('message', ({ data }) => {
-                if (data.id === 82) {
-                    done();
-                }
-            });
-
-            worker.postMessage({
-                id: 82,
-                method: 'clear',
-                params: { timerId, timerType }
-            });
-        });
 
         beforeEach(() => {
             timerType = 'timeout';

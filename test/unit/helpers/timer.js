@@ -13,8 +13,8 @@ describe('timer', () => {
                 scheduleInterval(1000, timerId, now);
             });
 
-            it('should clear the interval', () => {
-                clearScheduledInterval(timerId);
+            it('should return true', () => {
+                expect(clearScheduledInterval(timerId)).to.be.true;
             });
         });
 
@@ -25,11 +25,8 @@ describe('timer', () => {
                 timerId = 21;
             });
 
-            it('should throw an error', () => {
-                expect(() => clearScheduledInterval(timerId)).to.throw(
-                    Error,
-                    `There is no interval scheduled with the given id "${timerId}".`
-                );
+            it('should return false', () => {
+                expect(clearScheduledInterval(timerId)).to.be.false;
             });
         });
     });
@@ -46,8 +43,8 @@ describe('timer', () => {
                 scheduleTimeout(1000, timerId, now);
             });
 
-            it('should clear the timeout', () => {
-                clearScheduledTimeout(timerId);
+            it('should return true', () => {
+                expect(clearScheduledTimeout(timerId)).to.be.true;
             });
         });
 
@@ -58,11 +55,8 @@ describe('timer', () => {
                 timerId = 21;
             });
 
-            it('should throw an error', () => {
-                expect(() => clearScheduledTimeout(timerId)).to.throw(
-                    Error,
-                    `There is no timeout scheduled with the given id "${timerId}".`
-                );
+            it('should return false', () => {
+                expect(clearScheduledTimeout(timerId)).to.be.false;
             });
         });
     });

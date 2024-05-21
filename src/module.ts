@@ -17,13 +17,9 @@ addEventListener('message', ({ data }: IBrokerEvent) => {
             } = data;
 
             if (timerType === 'interval') {
-                clearScheduledInterval(timerId);
-
-                postMessage(<IClearResponse>{ error: null, id });
+                postMessage(<IClearResponse>{ id, result: clearScheduledInterval(timerId) });
             } else if (timerType === 'timeout') {
-                clearScheduledTimeout(timerId);
-
-                postMessage(<IClearResponse>{ error: null, id });
+                postMessage(<IClearResponse>{ id, result: clearScheduledTimeout(timerId) });
             } else {
                 throw new Error(`The given type "${timerType}" is not supported`);
             }

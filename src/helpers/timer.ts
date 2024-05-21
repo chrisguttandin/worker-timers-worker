@@ -7,22 +7,26 @@ export const clearScheduledInterval = (timerId: number) => {
     const identifier = scheduledIntervalIdentifiers.get(timerId);
 
     if (identifier === undefined) {
-        throw new Error(`There is no interval scheduled with the given id "${timerId}".`);
+        return false;
     }
 
     clearTimeout(identifier);
     scheduledIntervalIdentifiers.delete(timerId);
+
+    return true;
 };
 
 export const clearScheduledTimeout = (timerId: number) => {
     const identifier = scheduledTimeoutIdentifiers.get(timerId);
 
     if (identifier === undefined) {
-        throw new Error(`There is no timeout scheduled with the given id "${timerId}".`);
+        return false;
     }
 
     clearTimeout(identifier);
     scheduledTimeoutIdentifiers.delete(timerId);
+
+    return true;
 };
 
 const computeDelayAndExpectedCallbackTime = (delay: number, nowAndTimeOrigin: number) => {
@@ -39,6 +43,7 @@ const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, e
     if (remainingDelay > 0) {
         identifiers.set(timerId, setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType));
     } else {
+        identifiers.delete(timerId);
         postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });
     }
 };

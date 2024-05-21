@@ -34,7 +34,7 @@ describe('module', () => {
                     // Wait 200ms to be sure the function never gets called.
                     setTimeout(done, 200);
                 } else {
-                    throw new Error('this should never be called');
+                    done(new Error('This should never be called.'));
                 }
             });
 
@@ -82,7 +82,7 @@ describe('module', () => {
                     // Wait 200ms to be sure the function never gets called.
                     setTimeout(done, 200);
                 } else {
-                    throw new Error('this should never be called');
+                    done(new Error('This should never be called.'));
                 }
             });
 
@@ -128,7 +128,7 @@ describe('module', () => {
                         });
                     }
                 } else {
-                    throw new Error('this should never be called');
+                    done(new Error('This should never be called.'));
                 }
             });
 

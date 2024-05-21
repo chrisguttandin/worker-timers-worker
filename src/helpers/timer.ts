@@ -6,23 +6,23 @@ const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
 export const clearScheduledInterval = (timerId: number) => {
     const identifier = scheduledIntervalIdentifiers.get(timerId);
 
-    if (identifier !== undefined) {
-        clearTimeout(identifier);
-        scheduledIntervalIdentifiers.delete(timerId);
-    } else {
+    if (identifier === undefined) {
         throw new Error(`There is no interval scheduled with the given id "${timerId}".`);
     }
+
+    clearTimeout(identifier);
+    scheduledIntervalIdentifiers.delete(timerId);
 };
 
 export const clearScheduledTimeout = (timerId: number) => {
     const identifier = scheduledTimeoutIdentifiers.get(timerId);
 
-    if (identifier !== undefined) {
-        clearTimeout(identifier);
-        scheduledTimeoutIdentifiers.delete(timerId);
-    } else {
+    if (identifier === undefined) {
         throw new Error(`There is no timeout scheduled with the given id "${timerId}".`);
     }
+
+    clearTimeout(identifier);
+    scheduledTimeoutIdentifiers.delete(timerId);
 };
 
 const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: number) => {

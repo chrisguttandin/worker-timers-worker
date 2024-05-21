@@ -43,7 +43,7 @@ describe('module', () => {
                 method: 'set',
                 params: {
                     delay: 100,
-                    now: performance.now(),
+                    now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
@@ -91,7 +91,7 @@ describe('module', () => {
                 method: 'set',
                 params: {
                     delay: 100,
-                    now: performance.now(),
+                    now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
@@ -137,7 +137,7 @@ describe('module', () => {
                 method: 'set',
                 params: {
                     delay: 100,
-                    now: performance.now(),
+                    now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
@@ -197,7 +197,7 @@ describe('module', () => {
                 method: 'set',
                 params: {
                     delay: 100,
-                    now: performance.now(),
+                    now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
@@ -251,7 +251,7 @@ describe('module', () => {
                 method: 'set',
                 params: {
                     delay: 100,
-                    now: performance.now(),
+                    now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }

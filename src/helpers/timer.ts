@@ -25,32 +25,26 @@ export const clearScheduledTimeout = (timerId: number) => {
     scheduledTimeoutIdentifiers.delete(timerId);
 };
 
-const computeDelayAndExpectedCallbackTime = (delay: number, nowInMainThread: number) => {
-    let now: number;
-    let remainingDelay: number;
-    const nowInWorker = performance.now();
-    const elapsed = Math.max(0, nowInWorker - nowInMainThread);
-
-    now = nowInWorker;
-    remainingDelay = delay - elapsed;
-
+const computeDelayAndExpectedCallbackTime = (delay: number, nowAndTimeOrigin: number) => {
+    const now = performance.now();
+    const remainingDelay = delay + nowAndTimeOrigin - now - performance.timeOrigin;
     const expected = now + remainingDelay;
 
     return { expected, remainingDelay };
 };
 
 const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
-    const now = performance.now();
+    const remainingDelay = expected - performance.now();
 
-    if (now > expected) {
-        postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });
+    if (remainingDelay > 0) {
+        identifiers.set(timerId, setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType));
     } else {
-        identifiers.set(timerId, setTimeout(setTimeoutCallback, expected - now, identifiers, timerId, expected, timerType));
+        postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });
     }
 };
 
-export const scheduleInterval = (delay: number, timerId: number, nowInMainThread: number) => {
-    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
+export const scheduleInterval = (delay: number, timerId: number, nowAndTimeOrigin: number) => {
+    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
     scheduledIntervalIdentifiers.set(
         timerId,
@@ -58,8 +52,8 @@ export const scheduleInterval = (delay: number, timerId: number, nowInMainThread
     );
 };
 
-export const scheduleTimeout = (delay: number, timerId: number, nowInMainThread: number) => {
-    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowInMainThread);
+export const scheduleTimeout = (delay: number, timerId: number, nowAndTimeOrigin: number) => {
+    const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
     scheduledTimeoutIdentifiers.set(
         timerId,

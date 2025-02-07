@@ -23,7 +23,7 @@ describe('createClearScheduledInterval()', () => {
                 now = 1000000;
                 timerId = 17;
 
-                scheduleInterval(1000, timerId, now);
+                scheduleInterval(1000, timerId, 'interval', now);
             });
 
             it('should return true', () => {

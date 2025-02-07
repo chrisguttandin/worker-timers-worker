@@ -32,9 +32,9 @@ createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<I
     },
     set: async ({ delay, now, timerId, timerType }) => {
         if (timerType === 'interval') {
-            return { result: await scheduleInterval(delay, timerId, now) };
+            return { result: await scheduleInterval(delay, timerId, timerType, now) };
         }
 
-        return { result: await scheduleTimeout(delay, timerId, now) };
+        return { result: await scheduleTimeout(delay, timerId, timerType, now) };
     }
 });

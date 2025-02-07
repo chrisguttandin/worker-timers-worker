@@ -23,7 +23,7 @@ describe('createClearScheduledTimeout()', () => {
                 now = 1000000;
                 timerId = 17;
 
-                scheduleTimeout(1000, 18, timerId, now);
+                scheduleTimeout(1000, timerId, now);
             });
 
             it('should return true', () => {

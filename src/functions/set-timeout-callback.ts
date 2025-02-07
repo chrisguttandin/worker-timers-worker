@@ -1,18 +1,21 @@
-import { ISetResponse } from '../interfaces';
+import { TResolveSetResponseResultPromise, TTimerType } from '../types';
 
 export const setTimeoutCallback = (
-    id: number,
-    identifiers: Map<number, [number, number]>,
+    identifiers: Map<number, [number, TResolveSetResponseResultPromise]>,
     timerId: number,
     expected: number,
-    timerType: string
+    timerType: TTimerType,
+    resolve: TResolveSetResponseResultPromise
 ) => {
     const remainingDelay = expected - performance.now();
 
     if (remainingDelay > 0) {
-        identifiers.set(timerId, [setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType), id]);
+        identifiers.set(timerId, [
+            setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType, resolve),
+            resolve
+        ]);
     } else {
         identifiers.delete(timerId);
-        postMessage(<ISetResponse>{ id, result: { timerId, timerType } });
+        resolve({ timerId, timerType });
     }
 };

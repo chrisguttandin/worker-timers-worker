@@ -1,4 +1,9 @@
-import { clearScheduledInterval, clearScheduledTimeout, scheduleInterval, scheduleTimeout } from './helpers/timer';
+import { createClearScheduledInterval } from './factories/clear-scheduled-interval';
+import { createClearScheduledTimeout } from './factories/clear-scheduled-timeout';
+import { createScheduleInterval } from './factories/schedule-interval';
+import { createScheduleTimeout } from './factories/schedule-timeout';
+import { computeDelayAndExpectedCallbackTime } from './functions/compute-delay-and-expected-callback-time';
+import { setTimeoutCallback } from './functions/set-timeout-callback';
 import { IBrokerEvent, IClearResponse, IErrorNotification, IErrorResponse } from './interfaces';
 
 /*
@@ -7,6 +12,13 @@ import { IBrokerEvent, IClearResponse, IErrorNotification, IErrorResponse } from
  */
 export * from './interfaces/index';
 export * from './types/index';
+
+const scheduledIntervalIdentifiers: Map<number, [number, number]> = new Map();
+const scheduledTimeoutIdentifiers: Map<number, [number, number]> = new Map();
+const clearScheduledInterval = createClearScheduledInterval(scheduledIntervalIdentifiers);
+const clearScheduledTimeout = createClearScheduledTimeout(scheduledTimeoutIdentifiers);
+const scheduleInterval = createScheduleInterval(computeDelayAndExpectedCallbackTime, scheduledIntervalIdentifiers, setTimeoutCallback);
+const scheduleTimeout = createScheduleTimeout(computeDelayAndExpectedCallbackTime, scheduledTimeoutIdentifiers, setTimeoutCallback);
 
 addEventListener('message', ({ data }: IBrokerEvent) => {
     try {

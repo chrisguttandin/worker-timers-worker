@@ -1,3 +1,3 @@
-import { IClearRequest, ISetNotification } from '../interfaces';
+import { IClearRequest, ISetRequest } from '../interfaces';
 
-export type TBrokerMessage = IClearRequest | ISetNotification;
+export type TBrokerMessage = IClearRequest | ISetRequest;

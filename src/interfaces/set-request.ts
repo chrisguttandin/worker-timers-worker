@@ -1,7 +1,7 @@
 import { TTimerType } from '../types';
 
-export interface ISetNotification {
-    id: null;
+export interface ISetRequest {
+    id: number;
 
     method: 'set';
 

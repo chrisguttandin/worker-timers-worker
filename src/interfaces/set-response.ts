@@ -1,11 +1,9 @@
 import { TTimerType } from '../types';
 
-export interface ICallNotification {
-    id: null;
+export interface ISetResponse {
+    id: number;
 
-    method: 'call';
-
-    params: {
+    result: null | {
         timerId: number;
 
         timerType: TTimerType;

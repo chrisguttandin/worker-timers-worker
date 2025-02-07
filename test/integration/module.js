@@ -1,3 +1,5 @@
+import { stub } from 'sinon';
+
 describe('module', () => {
     let timerId;
     let worker;
@@ -8,86 +10,51 @@ describe('module', () => {
     });
 
     describe('clearInterval()', () => {
+        let onMessage;
         let timerType;
 
         beforeEach(() => {
+            onMessage = stub();
             timerType = 'interval';
         });
 
-        it('should not call the function after clearing the interval', function (done) {
-            this.timeout(4000);
-
-            let isCleared = false;
-
-            worker.addEventListener('message', ({ data }) => {
-                if (!isCleared) {
-                    if (data.id === 82) {
-                        expect(data).to.deep.equal({ id: 82, result: true });
-
-                        isCleared = true;
-
-                        // Wait 200ms to be sure the function never gets called.
-                        setTimeout(done, 200);
-                    } else {
-                        expect(data).to.deep.equal({
-                            id: null,
-                            method: 'call',
-                            params: { timerId, timerType }
-                        });
-                    }
-                } else {
-                    done(new Error('This should never be called.'));
-                }
-            });
-
+        it('should send a response with the result set to true when clearing the interval before the callback', (done) => {
+            worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 100,
+                    delay: 1000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
             });
-
             worker.postMessage({
                 id: 82,
                 method: 'clear',
                 params: { timerId, timerType }
             });
+
+            setTimeout(() => {
+                expect(onMessage).to.have.been.calledTwice;
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: null });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
+
+                done();
+            }, 500);
         });
 
-        it('should not allow clearing the interval after the callback', function (done) {
-            this.timeout(4000);
-
-            let hasBeenCalledOnce = false;
-
-            worker.addEventListener('message', ({ data }) => {
-                if (!hasBeenCalledOnce && data.method === 'call') {
-                    expect(data).to.deep.equal({
-                        id: null,
-                        method: 'call',
-                        params: { timerId, timerType }
-                    });
-
-                    hasBeenCalledOnce = true;
-
-                    worker.postMessage({
-                        id: 82,
-                        method: 'clear',
-                        params: { timerId, timerType }
-                    });
-                } else if (data.id === 82) {
-                    expect(data).to.deep.equal({ id: 82, result: false });
-
-                    // Wait 200ms to be sure the function never gets called.
-                    setTimeout(done, 200);
-                } else {
-                    done(new Error('This should never be called.'));
-                }
+        it('should send a response with the result set to false when clearing the interval after the callback', (done) => {
+            onMessage.onFirstCall().callsFake(() => {
+                worker.postMessage({
+                    id: 82,
+                    method: 'clear',
+                    params: { timerId, timerType }
+                });
             });
 
+            worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
                 method: 'set',
@@ -98,90 +65,63 @@ describe('module', () => {
                     timerType
                 }
             });
+
+            setTimeout(() => {
+                expect(onMessage).to.have.been.calledTwice;
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: { timerId, timerType } });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
+
+                done();
+            }, 300);
         });
     });
 
     describe('clearTimeout()', () => {
+        let onMessage;
         let timerType;
 
         beforeEach(() => {
+            onMessage = stub();
             timerType = 'timeout';
         });
 
-        it('should not call the function after clearing the timeout', function (done) {
-            this.timeout(4000);
-
-            let isCleared = false;
-
-            worker.addEventListener('message', ({ data }) => {
-                if (!isCleared) {
-                    if (data.id === 82) {
-                        expect(data).to.deep.equal({ id: 82, result: true });
-
-                        isCleared = true;
-
-                        // Wait 200ms to be sure the function never gets called.
-                        setTimeout(done, 200);
-                    } else {
-                        expect(data).to.deep.equal({
-                            id: null,
-                            method: 'call',
-                            params: { timerId, timerType }
-                        });
-                    }
-                } else {
-                    done(new Error('This should never be called.'));
-                }
-            });
-
+        it('should send a response with the result set to true when clearing the interval before the timeout', (done) => {
+            worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 100,
+                    delay: 1000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
                 }
             });
-
             worker.postMessage({
                 id: 82,
                 method: 'clear',
                 params: { timerId, timerType }
             });
+
+            setTimeout(() => {
+                expect(onMessage).to.have.been.calledTwice;
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: null });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
+
+                done();
+            }, 500);
         });
 
-        it('should not allow clearing the timeout after the callback', function (done) {
-            this.timeout(4000);
-
-            let hasBeenCalledOnce = false;
-
-            worker.addEventListener('message', ({ data }) => {
-                if (!hasBeenCalledOnce && data.method === 'call') {
-                    expect(data).to.deep.equal({
-                        id: null,
-                        method: 'call',
-                        params: { timerId, timerType }
-                    });
-
-                    hasBeenCalledOnce = true;
-
-                    worker.postMessage({
-                        id: 82,
-                        method: 'clear',
-                        params: { timerId, timerType }
-                    });
-                } else if (data.id === 82) {
-                    expect(data).to.deep.equal({ id: 82, result: false });
-
-                    // Wait 200ms to be sure the function never gets called.
-                    setTimeout(done, 200);
-                } else {
-                    done(new Error('This should never be called.'));
-                }
+        it('should send a response with the result set to false when clearing the timeout after the callback', (done) => {
+            onMessage.onFirstCall().callsFake(() => {
+                worker.postMessage({
+                    id: 82,
+                    method: 'clear',
+                    params: { timerId, timerType }
+                });
             });
 
+            worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
                 method: 'set',
@@ -192,6 +132,14 @@ describe('module', () => {
                     timerType
                 }
             });
+
+            setTimeout(() => {
+                expect(onMessage).to.have.been.calledTwice;
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: { timerId, timerType } });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
+
+                done();
+            }, 300);
         });
     });
 
@@ -204,24 +152,23 @@ describe('module', () => {
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
-            const onMessage = ({ data }) => {
-                worker.removeEventListener('message', onMessage);
 
-                expect(data).to.deep.equal({
-                    id: null,
-                    method: 'call',
-                    params: { timerId, timerType }
-                });
+            worker.addEventListener(
+                'message',
+                ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: 18,
+                        result: { timerId, timerType }
+                    });
 
-                const elapsed = performance.now() - before;
+                    const elapsed = performance.now() - before;
 
-                expect(elapsed).to.be.at.least(100);
+                    expect(elapsed).to.be.at.least(100);
 
-                done();
-            };
-
-            worker.addEventListener('message', onMessage);
-
+                    done();
+                },
+                { once: true }
+            );
             worker.postMessage({
                 id: 18,
                 method: 'set',
@@ -244,24 +191,23 @@ describe('module', () => {
 
         it('should postpone a function for the given delay', (done) => {
             const before = performance.now();
-            const onMessage = ({ data }) => {
-                worker.removeEventListener('message', onMessage);
 
-                expect(data).to.deep.equal({
-                    id: null,
-                    method: 'call',
-                    params: { timerId, timerType }
-                });
+            worker.addEventListener(
+                'message',
+                ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: 18,
+                        result: { timerId, timerType }
+                    });
 
-                const elapsed = performance.now() - before;
+                    const elapsed = performance.now() - before;
 
-                expect(elapsed).to.be.at.least(100);
+                    expect(elapsed).to.be.at.least(100);
 
-                done();
-            };
-
-            worker.addEventListener('message', onMessage);
-
+                    done();
+                },
+                { once: true }
+            );
             worker.postMessage({
                 id: 18,
                 method: 'set',

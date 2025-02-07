@@ -10,7 +10,7 @@ describe('timer', () => {
                 now = 1000000;
                 timerId = 17;
 
-                scheduleInterval(1000, timerId, now);
+                scheduleInterval(1000, 18, timerId, now);
             });
 
             it('should return true', () => {
@@ -40,7 +40,7 @@ describe('timer', () => {
                 now = 1000000;
                 timerId = 17;
 
-                scheduleTimeout(1000, timerId, now);
+                scheduleTimeout(1000, 18, timerId, now);
             });
 
             it('should return true', () => {

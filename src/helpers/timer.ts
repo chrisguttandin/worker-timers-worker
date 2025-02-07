@@ -1,7 +1,7 @@
-import { ICallNotification } from '../interfaces';
+import { ISetResponse } from '../interfaces';
 
-const scheduledIntervalIdentifiers: Map<number, number> = new Map();
-const scheduledTimeoutIdentifiers: Map<number, number> = new Map();
+const scheduledIntervalIdentifiers: Map<number, [number, number]> = new Map();
+const scheduledTimeoutIdentifiers: Map<number, [number, number]> = new Map();
 
 export const clearScheduledInterval = (timerId: number) => {
     const identifier = scheduledIntervalIdentifiers.get(timerId);
@@ -10,8 +10,10 @@ export const clearScheduledInterval = (timerId: number) => {
         return false;
     }
 
-    clearTimeout(identifier);
+    clearTimeout(identifier[0]);
     scheduledIntervalIdentifiers.delete(timerId);
+
+    postMessage(<ISetResponse>{ id: identifier[1], result: null });
 
     return true;
 };
@@ -23,8 +25,10 @@ export const clearScheduledTimeout = (timerId: number) => {
         return false;
     }
 
-    clearTimeout(identifier);
+    clearTimeout(identifier[0]);
     scheduledTimeoutIdentifiers.delete(timerId);
+
+    postMessage(<ISetResponse>{ id: identifier[1], result: null });
 
     return true;
 };
@@ -37,31 +41,37 @@ const computeDelayAndExpectedCallbackTime = (delay: number, nowAndTimeOrigin: nu
     return { expected, remainingDelay };
 };
 
-const setTimeoutCallback = (identifiers: Map<number, number>, timerId: number, expected: number, timerType: string) => {
+const setTimeoutCallback = (
+    id: number,
+    identifiers: Map<number, [number, number]>,
+    timerId: number,
+    expected: number,
+    timerType: string
+) => {
     const remainingDelay = expected - performance.now();
 
     if (remainingDelay > 0) {
-        identifiers.set(timerId, setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType));
+        identifiers.set(timerId, [setTimeout(setTimeoutCallback, remainingDelay, identifiers, timerId, expected, timerType), id]);
     } else {
         identifiers.delete(timerId);
-        postMessage(<ICallNotification>{ id: null, method: 'call', params: { timerId, timerType } });
+        postMessage(<ISetResponse>{ id, result: { timerId, timerType } });
     }
 };
 
-export const scheduleInterval = (delay: number, timerId: number, nowAndTimeOrigin: number) => {
+export const scheduleInterval = (delay: number, id: number, timerId: number, nowAndTimeOrigin: number) => {
     const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
-    scheduledIntervalIdentifiers.set(
-        timerId,
-        setTimeout(setTimeoutCallback, remainingDelay, scheduledIntervalIdentifiers, timerId, expected, 'interval')
-    );
+    scheduledIntervalIdentifiers.set(timerId, [
+        setTimeout(setTimeoutCallback, remainingDelay, id, scheduledIntervalIdentifiers, timerId, expected, 'interval'),
+        id
+    ]);
 };
 
-export const scheduleTimeout = (delay: number, timerId: number, nowAndTimeOrigin: number) => {
+export const scheduleTimeout = (delay: number, id: number, timerId: number, nowAndTimeOrigin: number) => {
     const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
-    scheduledTimeoutIdentifiers.set(
-        timerId,
-        setTimeout(setTimeoutCallback, remainingDelay, scheduledTimeoutIdentifiers, timerId, expected, 'timeout')
-    );
+    scheduledTimeoutIdentifiers.set(timerId, [
+        setTimeout(setTimeoutCallback, remainingDelay, id, scheduledTimeoutIdentifiers, timerId, expected, 'timeout'),
+        id
+    ]);
 };

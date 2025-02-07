@@ -25,13 +25,14 @@ addEventListener('message', ({ data }: IBrokerEvent) => {
             }
         } else if (data.method === 'set') {
             const {
+                id,
                 params: { delay, now, timerId, timerType }
             } = data;
 
             if (timerType === 'interval') {
-                scheduleInterval(delay, timerId, now);
+                scheduleInterval(delay, id, timerId, now);
             } else if (timerType === 'timeout') {
-                scheduleTimeout(delay, timerId, now);
+                scheduleTimeout(delay, id, timerId, now);
             } else {
                 throw new Error(`The given type "${timerType}" is not supported`);
             }

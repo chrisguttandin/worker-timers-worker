@@ -1,3 +1,3 @@
-import { ICallNotification, IClearResponse, IErrorNotification, IErrorResponse } from '../interfaces';
+import { IClearResponse, IErrorNotification, IErrorResponse, ISetResponse } from '../interfaces';
 
-export type TWorkerMessage = ICallNotification | IClearResponse | IErrorNotification | IErrorResponse;
+export type TWorkerMessage = ISetResponse | IClearResponse | IErrorNotification | IErrorResponse;

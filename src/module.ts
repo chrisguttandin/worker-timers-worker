@@ -1,6 +1,5 @@
 import { TWorkerImplementation, createWorker } from 'worker-factory';
-import { createClearScheduledInterval } from './factories/clear-scheduled-interval';
-import { createClearScheduledTimeout } from './factories/clear-scheduled-timeout';
+import { createClearTimer } from './factories/clear-timer';
 import { createScheduleInterval } from './factories/schedule-interval';
 import { createScheduleTimeout } from './factories/schedule-timeout';
 import { computeDelayAndExpectedCallbackTime } from './functions/compute-delay-and-expected-callback-time';
@@ -15,20 +14,16 @@ import { TResolveSetResponseResultPromise } from './types';
 export * from './interfaces/index';
 export * from './types/index';
 
-const scheduledIntervalIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const scheduledTimeoutIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const clearScheduledInterval = createClearScheduledInterval(scheduledIntervalIdentifiers);
-const clearScheduledTimeout = createClearScheduledTimeout(scheduledTimeoutIdentifiers);
-const scheduleInterval = createScheduleInterval(computeDelayAndExpectedCallbackTime, scheduledIntervalIdentifiers, setTimeoutCallback);
-const scheduleTimeout = createScheduleTimeout(computeDelayAndExpectedCallbackTime, scheduledTimeoutIdentifiers, setTimeoutCallback);
+const intervalIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
+const clearInterval = createClearTimer(intervalIdentifiers);
+const timeoutIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
+const clearTimeout = createClearTimer(timeoutIdentifiers);
+const scheduleInterval = createScheduleInterval(computeDelayAndExpectedCallbackTime, intervalIdentifiers, setTimeoutCallback);
+const scheduleTimeout = createScheduleTimeout(computeDelayAndExpectedCallbackTime, timeoutIdentifiers, setTimeoutCallback);
 
 createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<IWorkerTimersWorkerCustomDefinition>>{
     clear: ({ timerId, timerType }) => {
-        if (timerType === 'interval') {
-            return { result: clearScheduledInterval(timerId) };
-        }
-
-        return { result: clearScheduledTimeout(timerId) };
+        return { result: timerType === 'interval' ? clearInterval(timerId) : clearTimeout(timerId) };
     },
     set: async ({ delay, now, timerId, timerType }) => {
         if (timerType === 'interval') {

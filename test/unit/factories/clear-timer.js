@@ -2,12 +2,12 @@ import { createClearTimer } from '../../../src/factories/clear-timer';
 
 describe('createClearTimer()', () => {
     let clearTimer;
-    let identifiers;
+    let identifiersAndResolvers;
 
     beforeEach(() => {
-        identifiers = new Map();
+        identifiersAndResolvers = new Map();
 
-        clearTimer = createClearTimer(identifiers);
+        clearTimer = createClearTimer(identifiersAndResolvers);
     });
 
     describe('clearTimer()', () => {
@@ -17,7 +17,7 @@ describe('createClearTimer()', () => {
             beforeEach(() => {
                 timerId = 17;
 
-                identifiers.set(timerId, [1, () => {}]);
+                identifiersAndResolvers.set(timerId, [1, () => {}]);
             });
 
             it('should return true', () => {

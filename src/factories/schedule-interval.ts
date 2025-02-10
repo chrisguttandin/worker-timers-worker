@@ -5,15 +5,23 @@ import { TResolveSetResponseResultPromise, TTimerType } from '../types';
 export const createScheduleInterval =
     (
         computeDelayAndExpectedCallbackTime: typeof computeDelayAndExpectedCallbackTimeFunction,
-        scheduledIntervalIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]>,
+        scheduledIntervalIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
         setTimeoutCallback: typeof setTimeoutCallbackFunction
     ) =>
     (delay: number, timerId: number, timerType: TTimerType, nowAndTimeOrigin: number) => {
         const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
         return new Promise((resolve) => {
-            scheduledIntervalIdentifiers.set(timerId, [
-                setTimeout(setTimeoutCallback, remainingDelay, scheduledIntervalIdentifiers, timerId, expected, timerType, resolve),
+            scheduledIntervalIdentifiersAndResolvers.set(timerId, [
+                setTimeout(
+                    setTimeoutCallback,
+                    remainingDelay,
+                    scheduledIntervalIdentifiersAndResolvers,
+                    timerId,
+                    expected,
+                    timerType,
+                    resolve
+                ),
                 resolve
             ]);
         });

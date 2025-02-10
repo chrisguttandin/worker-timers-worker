@@ -14,12 +14,12 @@ import { TResolveSetResponseResultPromise } from './types';
 export * from './interfaces/index';
 export * from './types/index';
 
-const intervalIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const clearInterval = createClearTimer(intervalIdentifiers);
-const timeoutIdentifiers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const clearTimeout = createClearTimer(timeoutIdentifiers);
-const scheduleInterval = createScheduleInterval(computeDelayAndExpectedCallbackTime, intervalIdentifiers, setTimeoutCallback);
-const scheduleTimeout = createScheduleTimeout(computeDelayAndExpectedCallbackTime, timeoutIdentifiers, setTimeoutCallback);
+const intervalIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
+const clearInterval = createClearTimer(intervalIdentifiersAndResolvers);
+const timeoutIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
+const clearTimeout = createClearTimer(timeoutIdentifiersAndResolvers);
+const scheduleInterval = createScheduleInterval(computeDelayAndExpectedCallbackTime, intervalIdentifiersAndResolvers, setTimeoutCallback);
+const scheduleTimeout = createScheduleTimeout(computeDelayAndExpectedCallbackTime, timeoutIdentifiersAndResolvers, setTimeoutCallback);
 
 createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<IWorkerTimersWorkerCustomDefinition>>{
     clear: ({ timerId, timerType }) => {

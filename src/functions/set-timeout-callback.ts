@@ -1,25 +1,16 @@
-import { TResolveSetResponseResultPromise, TTimerType } from '../types';
+import { TResolveSetResponseResultPromise } from '../types';
 
 export const setTimeoutCallback = (
     expected: number,
     identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
     resolveSetResponseResultPromise: TResolveSetResponseResultPromise,
-    timerId: number,
-    timerType: TTimerType
+    timerId: number
 ) => {
     const remainingDelay = expected - performance.now();
 
     if (remainingDelay > 0) {
         identifiersAndResolvers.set(timerId, [
-            setTimeout(
-                setTimeoutCallback,
-                remainingDelay,
-                expected,
-                identifiersAndResolvers,
-                resolveSetResponseResultPromise,
-                timerId,
-                timerType
-            ),
+            setTimeout(setTimeoutCallback, remainingDelay, expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId),
             resolveSetResponseResultPromise
         ]);
     } else {

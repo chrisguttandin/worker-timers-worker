@@ -25,6 +25,6 @@ createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<I
         return { result: timerType === 'interval' ? clearInterval(timerId) : clearTimeout(timerId) };
     },
     set: async ({ delay, now, timerId, timerType }) => {
-        return { result: await (timerType === 'interval' ? setInterval : setTimeout)(delay, timerId, timerType, now) };
+        return { result: await (timerType === 'interval' ? setInterval : setTimeout)(delay, now, timerId) };
     }
 });

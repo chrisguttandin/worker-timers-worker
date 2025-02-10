@@ -1,6 +1,6 @@
 import type { computeDelayAndExpectedCallbackTime as computeDelayAndExpectedCallbackTimeFunction } from '../functions/compute-delay-and-expected-callback-time';
 import type { setTimeoutCallback as setTimeoutCallbackFunction } from '../functions/set-timeout-callback';
-import { TResolveSetResponseResultPromise, TTimerType } from '../types';
+import { TResolveSetResponseResultPromise } from '../types';
 
 export const createSetTimer =
     (
@@ -8,12 +8,12 @@ export const createSetTimer =
         identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
         setTimeoutCallback: typeof setTimeoutCallbackFunction
     ) =>
-    (delay: number, timerId: number, timerType: TTimerType, nowAndTimeOrigin: number) => {
+    (delay: number, nowAndTimeOrigin: number, timerId: number) => {
         const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
         return new Promise((resolve) => {
             identifiersAndResolvers.set(timerId, [
-                setTimeout(setTimeoutCallback, remainingDelay, expected, identifiersAndResolvers, resolve, timerId, timerType),
+                setTimeout(setTimeoutCallback, remainingDelay, expected, identifiersAndResolvers, resolve, timerId),
                 resolve
             ]);
         });

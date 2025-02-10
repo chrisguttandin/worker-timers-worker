@@ -10,7 +10,7 @@ export const createClearTimer = (identifiers: Map<number, [number, TResolveSetRe
     clearTimeout(identifier[0]);
     identifiers.delete(timerId);
 
-    identifier[1](null);
+    identifier[1](false);
 
     return true;
 };

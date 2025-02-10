@@ -16,6 +16,6 @@ export const setTimeoutCallback = (
         ]);
     } else {
         identifiers.delete(timerId);
-        resolve({ timerId, timerType });
+        resolve(true);
     }
 };

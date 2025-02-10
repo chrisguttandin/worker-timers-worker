@@ -38,7 +38,7 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: null });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: false });
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
 
                 done();
@@ -68,7 +68,7 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: { timerId, timerType } });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: true });
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
 
                 done();
@@ -105,7 +105,7 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: null });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: false });
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
 
                 done();
@@ -135,7 +135,7 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: { timerId, timerType } });
+                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: true });
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
 
                 done();
@@ -158,7 +158,7 @@ describe('module', () => {
                 ({ data }) => {
                     expect(data).to.deep.equal({
                         id: 18,
-                        result: { timerId, timerType }
+                        result: true
                     });
 
                     const elapsed = performance.now() - before;
@@ -197,7 +197,7 @@ describe('module', () => {
                 ({ data }) => {
                     expect(data).to.deep.equal({
                         id: 18,
-                        result: { timerId, timerType }
+                        result: true
                     });
 
                     const elapsed = performance.now() - before;

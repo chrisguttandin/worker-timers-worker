@@ -26,11 +26,7 @@ export interface IWorkerTimersWorkerCustomDefinition extends IWorkerDefinition {
         };
 
         response: {
-            result: null | {
-                timerId: number;
-
-                timerType: TTimerType;
-            };
+            result: boolean;
         };
     };
 }

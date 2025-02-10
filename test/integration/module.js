@@ -24,7 +24,7 @@ describe('module', () => {
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 1000,
+                    delay: 2000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
@@ -42,7 +42,7 @@ describe('module', () => {
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
 
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should send a response with the result set to false when clearing the interval after the callback', (done) => {
@@ -59,7 +59,7 @@ describe('module', () => {
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 100,
+                    delay: 1000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
@@ -72,7 +72,7 @@ describe('module', () => {
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
 
                 done();
-            }, 300);
+            }, 2000);
         });
     });
 
@@ -91,7 +91,7 @@ describe('module', () => {
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 1000,
+                    delay: 2000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
@@ -109,7 +109,7 @@ describe('module', () => {
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
 
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should send a response with the result set to false when clearing the timeout after the callback', (done) => {
@@ -126,7 +126,7 @@ describe('module', () => {
                 id: 18,
                 method: 'set',
                 params: {
-                    delay: 100,
+                    delay: 1000,
                     now: performance.timeOrigin + performance.now(),
                     timerId,
                     timerType
@@ -139,7 +139,7 @@ describe('module', () => {
                 expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
 
                 done();
-            }, 300);
+            }, 2000);
         });
     });
 

@@ -1,11 +1,11 @@
 import { TResolveSetResponseResultPromise, TTimerType } from '../types';
 
 export const setTimeoutCallback = (
-    identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
-    timerId: number,
     expected: number,
-    timerType: TTimerType,
-    resolveSetResponseResultPromise: TResolveSetResponseResultPromise
+    identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
+    resolveSetResponseResultPromise: TResolveSetResponseResultPromise,
+    timerId: number,
+    timerType: TTimerType
 ) => {
     const remainingDelay = expected - performance.now();
 
@@ -14,11 +14,11 @@ export const setTimeoutCallback = (
             setTimeout(
                 setTimeoutCallback,
                 remainingDelay,
-                identifiersAndResolvers,
-                timerId,
                 expected,
-                timerType,
-                resolveSetResponseResultPromise
+                identifiersAndResolvers,
+                resolveSetResponseResultPromise,
+                timerId,
+                timerType
             ),
             resolveSetResponseResultPromise
         ]);

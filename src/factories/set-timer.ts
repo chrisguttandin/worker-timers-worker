@@ -2,26 +2,18 @@ import type { computeDelayAndExpectedCallbackTime as computeDelayAndExpectedCall
 import type { setTimeoutCallback as setTimeoutCallbackFunction } from '../functions/set-timeout-callback';
 import { TResolveSetResponseResultPromise, TTimerType } from '../types';
 
-export const createScheduleInterval =
+export const createSetTimer =
     (
         computeDelayAndExpectedCallbackTime: typeof computeDelayAndExpectedCallbackTimeFunction,
-        scheduledIntervalIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
+        identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
         setTimeoutCallback: typeof setTimeoutCallbackFunction
     ) =>
     (delay: number, timerId: number, timerType: TTimerType, nowAndTimeOrigin: number) => {
         const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
 
         return new Promise((resolve) => {
-            scheduledIntervalIdentifiersAndResolvers.set(timerId, [
-                setTimeout(
-                    setTimeoutCallback,
-                    remainingDelay,
-                    scheduledIntervalIdentifiersAndResolvers,
-                    timerId,
-                    expected,
-                    timerType,
-                    resolve
-                ),
+            identifiersAndResolvers.set(timerId, [
+                setTimeout(setTimeoutCallback, remainingDelay, expected, identifiersAndResolvers, resolve, timerId, timerType),
                 resolve
             ]);
         });

@@ -38,8 +38,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: false });
-                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
+                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
+                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
 
                 done();
             }, 2000);
@@ -68,8 +68,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: true });
-                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
+                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
+                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
 
                 done();
             }, 4000);
@@ -105,8 +105,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: false });
-                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: true });
+                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
+                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
 
                 done();
             }, 2000);
@@ -135,8 +135,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage).to.have.been.calledWithExactly({ id: 18, result: true });
-                expect(onMessage).to.have.been.calledWithExactly({ id: 82, result: false });
+                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
+                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
 
                 done();
             }, 4000);

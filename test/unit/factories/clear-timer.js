@@ -20,8 +20,8 @@ describe('createClearTimer()', () => {
                 identifiersAndResolvers.set(timerId, [1, () => {}]);
             });
 
-            it('should return true', () => {
-                expect(clearTimer(timerId)).to.be.true;
+            it('should resolve to true', async () => {
+                expect(await clearTimer(timerId)).to.be.true;
             });
         });
 
@@ -32,8 +32,8 @@ describe('createClearTimer()', () => {
                 timerId = 21;
             });
 
-            it('should return false', () => {
-                expect(clearTimer(timerId)).to.be.false;
+            it('should resolve to false', async () => {
+                expect(await clearTimer(timerId)).to.be.false;
             });
         });
     });

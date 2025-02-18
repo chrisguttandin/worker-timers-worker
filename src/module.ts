@@ -21,8 +21,8 @@ const setInterval = createSetTimer(computeDelayAndExpectedCallbackTime, interval
 const setTimeout = createSetTimer(computeDelayAndExpectedCallbackTime, timeoutIdentifiersAndResolvers, setTimeoutCallback);
 
 createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<IWorkerTimersWorkerCustomDefinition>>{
-    clear: ({ timerId, timerType }) => {
-        return { result: timerType === 'interval' ? clearInterval(timerId) : clearTimeout(timerId) };
+    clear: async ({ timerId, timerType }) => {
+        return { result: await (timerType === 'interval' ? clearInterval(timerId) : clearTimeout(timerId)) };
     },
     set: async ({ delay, now, timerId, timerType }) => {
         return { result: await (timerType === 'interval' ? setInterval : setTimeout)(delay, now, timerId) };

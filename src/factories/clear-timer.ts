@@ -4,7 +4,7 @@ export const createClearTimer = (identifiersAndResolvers: Map<number, [number, T
     const identifiersAndResolver = identifiersAndResolvers.get(timerId);
 
     if (identifiersAndResolver === undefined) {
-        return false;
+        return Promise.resolve(false);
     }
 
     const [identifier, resolveSetResponseResultPromise] = identifiersAndResolver;
@@ -14,5 +14,5 @@ export const createClearTimer = (identifiersAndResolvers: Map<number, [number, T
 
     resolveSetResponseResultPromise(false);
 
-    return true;
+    return Promise.resolve(true);
 };

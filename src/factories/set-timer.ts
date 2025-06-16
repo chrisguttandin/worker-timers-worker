@@ -1,16 +1,16 @@
 import { TResolveSetResponseResultPromise } from '../types';
-import type { createComputeDelayAndExpectedCallbackTime } from './compute-delay-and-expected-callback-time';
 import type { createSetTimeoutCallback } from './set-timeout-callback';
 
 export const createSetTimer =
     (
-        computeDelayAndExpectedCallbackTime: ReturnType<typeof createComputeDelayAndExpectedCallbackTime>,
         identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
+        performance: Pick<Performance, 'now' | 'timeOrigin'>,
         setTimeout: (typeof globalThis)['setTimeout'],
         setTimeoutCallback: ReturnType<typeof createSetTimeoutCallback>
     ) =>
     (delay: number, nowAndTimeOrigin: number, timerId: number) => {
-        const { expected, remainingDelay } = computeDelayAndExpectedCallbackTime(delay, nowAndTimeOrigin);
+        const expected = delay + nowAndTimeOrigin - performance.timeOrigin;
+        const remainingDelay = expected - performance.now();
 
         return new Promise((resolve) => {
             identifiersAndResolvers.set(timerId, [

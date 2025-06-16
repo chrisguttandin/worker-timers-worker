@@ -1,5 +1,4 @@
 import { spy, stub } from 'sinon';
-import { createComputeDelayAndExpectedCallbackTime } from '../../../src/factories/compute-delay-and-expected-callback-time';
 import { createSetTimer } from '../../../src/factories/set-timer';
 
 describe('createSetTimer()', () => {
@@ -17,12 +16,7 @@ describe('createSetTimer()', () => {
         setTimeoutCallback = spy();
         timeoutId = Math.floor(Math.random() * 1000);
 
-        setTimer = createSetTimer(
-            createComputeDelayAndExpectedCallbackTime(performance),
-            identifiersAndResolvers,
-            setTimeout,
-            setTimeoutCallback
-        );
+        setTimer = createSetTimer(identifiersAndResolvers, performance, setTimeout, setTimeoutCallback);
 
         performance.now.returns(1 + Math.floor(Math.random() * 1000));
         setTimeout.returns(timeoutId);

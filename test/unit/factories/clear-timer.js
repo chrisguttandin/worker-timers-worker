@@ -1,13 +1,16 @@
 import { createClearTimer } from '../../../src/factories/clear-timer';
+import { spy } from 'sinon';
 
 describe('createClearTimer()', () => {
     let clearTimer;
+    let clearTimeout;
     let identifiersAndResolvers;
 
     beforeEach(() => {
+        clearTimeout = spy();
         identifiersAndResolvers = new Map();
 
-        clearTimer = createClearTimer(identifiersAndResolvers);
+        clearTimer = createClearTimer(clearTimeout, identifiersAndResolvers);
     });
 
     describe('clearTimer()', () => {

@@ -14,9 +14,9 @@ export * from './interfaces/index';
 export * from './types/index';
 
 const intervalIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const clearInterval = createClearTimer(intervalIdentifiersAndResolvers);
+const clearInterval = createClearTimer(globalThis.clearTimeout, intervalIdentifiersAndResolvers);
 const timeoutIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
-const clearTimeout = createClearTimer(timeoutIdentifiersAndResolvers);
+const clearTimeout = createClearTimer(globalThis.clearTimeout, timeoutIdentifiersAndResolvers);
 const computeDelayAndExpectedCallbackTime = createComputeDelayAndExpectedCallbackTime(performance);
 const setTimeoutCallback = createSetTimeoutCallback(performance, globalThis.setTimeout);
 const setInterval = createSetTimer(

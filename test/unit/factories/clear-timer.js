@@ -14,13 +14,39 @@ describe('createClearTimer()', () => {
     });
 
     describe('clearTimer()', () => {
+        let timerId;
+
+        beforeEach(() => {
+            timerId = Math.floor(Math.random() * 1000);
+        });
+
         describe('with a running timer', () => {
-            let timerId;
+            let resolveSetResponseResultPromise;
+            let timeoutId;
 
             beforeEach(() => {
-                timerId = 17;
+                resolveSetResponseResultPromise = spy();
+                timeoutId = Math.floor(Math.random() * 1000);
 
-                identifiersAndResolvers.set(timerId, [1, () => {}]);
+                identifiersAndResolvers.set(timerId, [timeoutId, resolveSetResponseResultPromise]);
+            });
+
+            it('should call clearTimeout() with the given timeoutId', async () => {
+                await clearTimer(timerId);
+
+                expect(clearTimeout).to.have.been.calledOnceWithExactly(timeoutId);
+            });
+
+            it('should delete the entry with the given timerId', async () => {
+                await clearTimer(timerId);
+
+                expect(identifiersAndResolvers.has(timerId)).to.be.false;
+            });
+
+            it('should call resolveSetResponseResultPromise() with true', async () => {
+                await clearTimer(timerId);
+
+                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWithExactly(false);
             });
 
             it('should resolve to true', async () => {
@@ -29,10 +55,10 @@ describe('createClearTimer()', () => {
         });
 
         describe('without a running timer', () => {
-            let timerId;
+            it('should not call clearTimeout()', async () => {
+                await clearTimer(timerId);
 
-            beforeEach(() => {
-                timerId = 21;
+                expect(clearTimeout).to.have.not.been.called;
             });
 
             it('should resolve to false', async () => {

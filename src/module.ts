@@ -1,8 +1,8 @@
 import { TWorkerImplementation, createWorker } from 'worker-factory';
 import { createClearTimer } from './factories/clear-timer';
-import { createSetTimer } from './factories/set-timer';
+import { createComputeDelayAndExpectedCallbackTime } from './factories/compute-delay-and-expected-callback-time';
 import { createSetTimeoutCallback } from './factories/set-timeout-callback';
-import { computeDelayAndExpectedCallbackTime } from './functions/compute-delay-and-expected-callback-time';
+import { createSetTimer } from './factories/set-timer';
 import { IWorkerTimersWorkerCustomDefinition } from './interfaces';
 import { TResolveSetResponseResultPromise } from './types';
 
@@ -17,6 +17,7 @@ const intervalIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseR
 const clearInterval = createClearTimer(intervalIdentifiersAndResolvers);
 const timeoutIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
 const clearTimeout = createClearTimer(timeoutIdentifiersAndResolvers);
+const computeDelayAndExpectedCallbackTime = createComputeDelayAndExpectedCallbackTime(performance);
 const setTimeoutCallback = createSetTimeoutCallback(performance);
 const setInterval = createSetTimer(computeDelayAndExpectedCallbackTime, intervalIdentifiersAndResolvers, setTimeoutCallback);
 const setTimeout = createSetTimer(computeDelayAndExpectedCallbackTime, timeoutIdentifiersAndResolvers, setTimeoutCallback);

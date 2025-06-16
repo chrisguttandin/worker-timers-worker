@@ -1,10 +1,10 @@
-import type { computeDelayAndExpectedCallbackTime as computeDelayAndExpectedCallbackTimeFunction } from '../functions/compute-delay-and-expected-callback-time';
-import type { createSetTimeoutCallback } from './set-timeout-callback';
 import { TResolveSetResponseResultPromise } from '../types';
+import type { createComputeDelayAndExpectedCallbackTime } from './compute-delay-and-expected-callback-time';
+import type { createSetTimeoutCallback } from './set-timeout-callback';
 
 export const createSetTimer =
     (
-        computeDelayAndExpectedCallbackTime: typeof computeDelayAndExpectedCallbackTimeFunction,
+        computeDelayAndExpectedCallbackTime: ReturnType<typeof createComputeDelayAndExpectedCallbackTime>,
         identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
         setTimeoutCallback: ReturnType<typeof createSetTimeoutCallback>
     ) =>

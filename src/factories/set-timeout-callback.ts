@@ -1,6 +1,6 @@
 import { TResolveSetResponseResultPromise } from '../types';
 
-export const createSetTimeoutCallback = (performance: Pick<Performance, 'now'>) => {
+export const createSetTimeoutCallback = (performance: Pick<Performance, 'now'>, setTimeout: (typeof globalThis)['setTimeout']) => {
     const setTimeoutCallback = (
         expected: number,
         identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,

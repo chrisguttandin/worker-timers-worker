@@ -18,9 +18,19 @@ const clearInterval = createClearTimer(intervalIdentifiersAndResolvers);
 const timeoutIdentifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]> = new Map();
 const clearTimeout = createClearTimer(timeoutIdentifiersAndResolvers);
 const computeDelayAndExpectedCallbackTime = createComputeDelayAndExpectedCallbackTime(performance);
-const setTimeoutCallback = createSetTimeoutCallback(performance);
-const setInterval = createSetTimer(computeDelayAndExpectedCallbackTime, intervalIdentifiersAndResolvers, setTimeoutCallback);
-const setTimeout = createSetTimer(computeDelayAndExpectedCallbackTime, timeoutIdentifiersAndResolvers, setTimeoutCallback);
+const setTimeoutCallback = createSetTimeoutCallback(performance, globalThis.setTimeout);
+const setInterval = createSetTimer(
+    computeDelayAndExpectedCallbackTime,
+    intervalIdentifiersAndResolvers,
+    globalThis.setTimeout,
+    setTimeoutCallback
+);
+const setTimeout = createSetTimer(
+    computeDelayAndExpectedCallbackTime,
+    timeoutIdentifiersAndResolvers,
+    globalThis.setTimeout,
+    setTimeoutCallback
+);
 
 createWorker<IWorkerTimersWorkerCustomDefinition>(self, <TWorkerImplementation<IWorkerTimersWorkerCustomDefinition>>{
     clear: async ({ timerId, timerType }) => {

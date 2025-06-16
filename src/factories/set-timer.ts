@@ -6,6 +6,7 @@ export const createSetTimer =
     (
         computeDelayAndExpectedCallbackTime: ReturnType<typeof createComputeDelayAndExpectedCallbackTime>,
         identifiersAndResolvers: Map<number, [number, TResolveSetResponseResultPromise]>,
+        setTimeout: (typeof globalThis)['setTimeout'],
         setTimeoutCallback: ReturnType<typeof createSetTimeoutCallback>
     ) =>
     (delay: number, nowAndTimeOrigin: number, timerId: number) => {

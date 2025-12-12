@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { createClearTimer } from '../../../src/factories/clear-timer';
 import { spy } from 'sinon';
 

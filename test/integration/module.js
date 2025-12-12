@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { stub } from 'sinon';
 
 describe('module', () => {
@@ -6,7 +7,7 @@ describe('module', () => {
 
     beforeEach(() => {
         timerId = 0;
-        worker = new Worker('base/src/module.js');
+        worker = new Worker(new URL('../../src/module', import.meta.url), { type: 'module' });
     });
 
     describe('clearInterval()', () => {
@@ -18,7 +19,9 @@ describe('module', () => {
             timerType = 'interval';
         });
 
-        it('should send a response with the result set to true when clearing the interval before the callback', (done) => {
+        it('should send a response with the result set to true when clearing the interval before the callback', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
@@ -41,11 +44,15 @@ describe('module', () => {
                 expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
                 expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
 
-                done();
+                resolve();
             }, 2000);
+
+            return promise;
         });
 
-        it('should send a response with the result set to false when clearing the interval after the callback', (done) => {
+        it('should send a response with the result set to false when clearing the interval after the callback', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             onMessage.onFirstCall().callsFake(() => {
                 worker.postMessage({
                     id: 82,
@@ -71,8 +78,10 @@ describe('module', () => {
                 expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
                 expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
 
-                done();
+                resolve();
             }, 4000);
+
+            return promise;
         });
     });
 
@@ -85,7 +94,9 @@ describe('module', () => {
             timerType = 'timeout';
         });
 
-        it('should send a response with the result set to true when clearing the interval before the timeout', (done) => {
+        it('should send a response with the result set to true when clearing the interval before the timeout', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             worker.addEventListener('message', ({ data }) => onMessage(data));
             worker.postMessage({
                 id: 18,
@@ -108,11 +119,15 @@ describe('module', () => {
                 expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
                 expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
 
-                done();
+                resolve();
             }, 2000);
+
+            return promise;
         });
 
-        it('should send a response with the result set to false when clearing the timeout after the callback', (done) => {
+        it('should send a response with the result set to false when clearing the timeout after the callback', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             onMessage.onFirstCall().callsFake(() => {
                 worker.postMessage({
                     id: 82,
@@ -138,8 +153,10 @@ describe('module', () => {
                 expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
                 expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
 
-                done();
+                resolve();
             }, 4000);
+
+            return promise;
         });
     });
 
@@ -150,7 +167,8 @@ describe('module', () => {
             timerType = 'interval';
         });
 
-        it('should postpone a function for the given delay', (done) => {
+        it('should postpone a function for the given delay', () => {
+            const { promise, resolve } = Promise.withResolvers();
             const before = performance.now();
 
             worker.addEventListener(
@@ -165,7 +183,7 @@ describe('module', () => {
 
                     expect(elapsed).to.be.at.least(100);
 
-                    done();
+                    resolve();
                 },
                 { once: true }
             );
@@ -179,6 +197,8 @@ describe('module', () => {
                     timerType
                 }
             });
+
+            return promise;
         });
     });
 
@@ -189,7 +209,8 @@ describe('module', () => {
             timerType = 'timeout';
         });
 
-        it('should postpone a function for the given delay', (done) => {
+        it('should postpone a function for the given delay', () => {
+            const { promise, resolve } = Promise.withResolvers();
             const before = performance.now();
 
             worker.addEventListener(
@@ -204,7 +225,7 @@ describe('module', () => {
 
                     expect(elapsed).to.be.at.least(100);
 
-                    done();
+                    resolve();
                 },
                 { once: true }
             );
@@ -218,6 +239,8 @@ describe('module', () => {
                     timerType
                 }
             });
+
+            return promise;
         });
     });
 });

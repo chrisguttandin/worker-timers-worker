@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { spy, stub } from 'sinon';
 import { createSetTimer } from '../../../src/factories/set-timer';
 
@@ -58,15 +59,19 @@ describe('createSetTimer()', () => {
             expect(identifiersAndResolver).to.deep.equal([timeoutId, resolveSetResponseResultPromise]);
         });
 
-        it('should return an unresolved promise', (done) => {
+        it('should return an unresolved promise', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             setTimer(delay, nowAndOrigin, timerId).then(then);
 
             // eslint-disable-next-line no-undef
             globalThis.setTimeout(() => {
                 expect(then).to.have.not.been.called;
 
-                done();
+                resolve();
             }, 100);
+
+            return promise;
         });
 
         it('should resolve the returned promise when calling resolveSetResponseResultPromise()', async () => {

@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('module', () => {
     let timerId;
@@ -15,7 +14,7 @@ describe('module', () => {
         let timerType;
 
         beforeEach(() => {
-            onMessage = stub();
+            onMessage = vi.fn();
             timerType = 'interval';
         });
 
@@ -41,8 +40,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
-                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
+                expect(onMessage.mock.calls[0]).to.deep.equal([{ id: 18, result: false }]);
+                expect(onMessage.mock.calls[1]).to.deep.equal([{ id: 82, result: true }]);
 
                 resolve();
             }, 2000);
@@ -53,7 +52,7 @@ describe('module', () => {
         it('should send a response with the result set to false when clearing the interval after the callback', () => {
             const { promise, resolve } = Promise.withResolvers();
 
-            onMessage.onFirstCall().callsFake(() => {
+            onMessage.mockImplementationOnce(() => {
                 worker.postMessage({
                     id: 82,
                     method: 'clear',
@@ -75,8 +74,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
-                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
+                expect(onMessage.mock.calls[0]).to.deep.equal([{ id: 18, result: true }]);
+                expect(onMessage.mock.calls[1]).to.deep.equal([{ id: 82, result: false }]);
 
                 resolve();
             }, 4000);
@@ -90,7 +89,7 @@ describe('module', () => {
         let timerType;
 
         beforeEach(() => {
-            onMessage = stub();
+            onMessage = vi.fn();
             timerType = 'timeout';
         });
 
@@ -116,8 +115,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: false }]);
-                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: true }]);
+                expect(onMessage.mock.calls[0]).to.deep.equal([{ id: 18, result: false }]);
+                expect(onMessage.mock.calls[1]).to.deep.equal([{ id: 82, result: true }]);
 
                 resolve();
             }, 2000);
@@ -128,7 +127,7 @@ describe('module', () => {
         it('should send a response with the result set to false when clearing the timeout after the callback', () => {
             const { promise, resolve } = Promise.withResolvers();
 
-            onMessage.onFirstCall().callsFake(() => {
+            onMessage.mockImplementationOnce(() => {
                 worker.postMessage({
                     id: 82,
                     method: 'clear',
@@ -150,8 +149,8 @@ describe('module', () => {
 
             setTimeout(() => {
                 expect(onMessage).to.have.been.calledTwice;
-                expect(onMessage.getCall(0).args).to.deep.equal([{ id: 18, result: true }]);
-                expect(onMessage.getCall(1).args).to.deep.equal([{ id: 82, result: false }]);
+                expect(onMessage.mock.calls[0]).to.deep.equal([{ id: 18, result: true }]);
+                expect(onMessage.mock.calls[1]).to.deep.equal([{ id: 82, result: false }]);
 
                 resolve();
             }, 4000);

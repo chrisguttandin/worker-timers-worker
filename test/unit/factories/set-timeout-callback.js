@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSetTimeoutCallback } from '../../../src/factories/set-timeout-callback';
 
 describe('createSetTimeoutCallback()', () => {
@@ -8,12 +7,12 @@ describe('createSetTimeoutCallback()', () => {
     let setTimeoutCallback;
 
     beforeEach(() => {
-        performance = { now: stub() };
-        setTimeout = spy();
+        performance = { now: vi.fn() };
+        setTimeout = vi.fn();
 
         setTimeoutCallback = createSetTimeoutCallback(performance, setTimeout);
 
-        performance.now.returns(1 + Math.floor(Math.random() * 1000));
+        performance.now.mockReturnValue(1 + Math.floor(Math.random() * 1000));
     });
 
     describe('setTimeoutCallback()', () => {
@@ -24,7 +23,7 @@ describe('createSetTimeoutCallback()', () => {
         beforeEach(() => {
             timerId = Math.floor(Math.random() * 1000);
             identifiersAndResolvers = new Map([[timerId, 'a fake entry']]);
-            resolveSetResponseResultPromise = spy();
+            resolveSetResponseResultPromise = vi.fn();
         });
 
         describe('with a callback before it was expected', () => {
@@ -49,7 +48,7 @@ describe('createSetTimeoutCallback()', () => {
             it('should call setTimeout() with itself and its parameters', () => {
                 setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
 
-                expect(setTimeout).to.have.been.calledOnceWithExactly(
+                expect(setTimeout).to.have.been.calledOnceWith(
                     setTimeoutCallback,
                     expected - performance.now(),
                     expected,
@@ -67,8 +66,8 @@ describe('createSetTimeoutCallback()', () => {
                 beforeEach(() => {
                     setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
 
-                    performance.now.returns(performance.now() + 1);
-                    setTimeout.resetHistory();
+                    performance.now.mockReturnValue(performance.now() + 1);
+                    setTimeout.mockClear();
                 });
 
                 it('should delete the entry with the given timerId', () => {
@@ -80,7 +79,7 @@ describe('createSetTimeoutCallback()', () => {
                 it('should call resolveSetResponseResultPromise() with true', () => {
                     setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
 
-                    expect(resolveSetResponseResultPromise).to.have.been.calledOnceWithExactly(true);
+                    expect(resolveSetResponseResultPromise).to.have.been.calledOnceWith(true);
                 });
 
                 it('should not call setTimeout()', () => {
@@ -111,7 +110,7 @@ describe('createSetTimeoutCallback()', () => {
             it('should call resolveSetResponseResultPromise() with true', () => {
                 setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
 
-                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWithExactly(true);
+                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWith(true);
             });
 
             it('should not call setTimeout()', () => {
@@ -141,7 +140,7 @@ describe('createSetTimeoutCallback()', () => {
             it('should call resolveSetResponseResultPromise() with true', () => {
                 setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
 
-                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWithExactly(true);
+                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWith(true);
             });
 
             it('should not call setTimeout()', () => {

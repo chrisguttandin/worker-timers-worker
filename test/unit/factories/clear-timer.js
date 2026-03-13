@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createClearTimer } from '../../../src/factories/clear-timer';
-import { spy } from 'sinon';
 
 describe('createClearTimer()', () => {
     let clearTimer;
@@ -8,7 +7,7 @@ describe('createClearTimer()', () => {
     let identifiersAndResolvers;
 
     beforeEach(() => {
-        clearTimeout = spy();
+        clearTimeout = vi.fn();
         identifiersAndResolvers = new Map();
 
         clearTimer = createClearTimer(clearTimeout, identifiersAndResolvers);
@@ -26,7 +25,7 @@ describe('createClearTimer()', () => {
             let timeoutId;
 
             beforeEach(() => {
-                resolveSetResponseResultPromise = spy();
+                resolveSetResponseResultPromise = vi.fn();
                 timeoutId = Math.floor(Math.random() * 1000);
 
                 identifiersAndResolvers.set(timerId, [timeoutId, resolveSetResponseResultPromise]);
@@ -35,7 +34,7 @@ describe('createClearTimer()', () => {
             it('should call clearTimeout() with the given timeoutId', async () => {
                 await clearTimer(timerId);
 
-                expect(clearTimeout).to.have.been.calledOnceWithExactly(timeoutId);
+                expect(clearTimeout).to.have.been.calledOnceWith(timeoutId);
             });
 
             it('should delete the entry with the given timerId', async () => {
@@ -47,7 +46,7 @@ describe('createClearTimer()', () => {
             it('should call resolveSetResponseResultPromise() with true', async () => {
                 await clearTimer(timerId);
 
-                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWithExactly(false);
+                expect(resolveSetResponseResultPromise).to.have.been.calledOnceWith(false);
             });
 
             it('should resolve to true', async () => {

@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSetTimer } from '../../../src/factories/set-timer';
 
 describe('createSetTimer()', () => {
@@ -12,15 +11,15 @@ describe('createSetTimer()', () => {
 
     beforeEach(() => {
         identifiersAndResolvers = new Map();
-        performance = { now: stub(), timeOrigin: Math.floor(Math.random() * 1000) };
-        setTimeout = stub();
-        setTimeoutCallback = spy();
+        performance = { now: vi.fn(), timeOrigin: Math.floor(Math.random() * 1000) };
+        setTimeout = vi.fn();
+        setTimeoutCallback = vi.fn();
         timeoutId = Math.floor(Math.random() * 1000);
 
         setTimer = createSetTimer(identifiersAndResolvers, performance, setTimeout, setTimeoutCallback);
 
-        performance.now.returns(1 + Math.floor(Math.random() * 1000));
-        setTimeout.returns(timeoutId);
+        performance.now.mockReturnValue(1 + Math.floor(Math.random() * 1000));
+        setTimeout.mockReturnValue(timeoutId);
     });
 
     describe('setTimer()', () => {
@@ -32,14 +31,14 @@ describe('createSetTimer()', () => {
         beforeEach(() => {
             delay = 1000 + Math.floor(Math.random() * 1000);
             nowAndOrigin = 1000 + Math.floor(Math.random() * 1000);
-            then = spy();
+            then = vi.fn();
             timerId = Math.floor(Math.random() * 1000);
         });
 
         it('should call setTimeout() with setTimeoutCallback(), the delay, and the expected parameters', () => {
             setTimer(delay, nowAndOrigin, timerId);
 
-            expect(setTimeout).to.have.been.calledOnceWithExactly(
+            expect(setTimeout).to.have.been.calledOnceWith(
                 setTimeoutCallback,
                 delay + nowAndOrigin - performance.timeOrigin - performance.now(),
                 delay + nowAndOrigin - performance.timeOrigin,
@@ -86,7 +85,7 @@ describe('createSetTimer()', () => {
 
             await Promise.resolve();
 
-            expect(then).to.have.been.calledOnceWithExactly(value);
+            expect(then).to.have.been.calledOnceWith(value);
         });
     });
 });

@@ -63,7 +63,6 @@ describe('createSetTimer()', () => {
 
             setTimer(delay, nowAndOrigin, timerId).then(then);
 
-            // eslint-disable-next-line no-undef
             globalThis.setTimeout(() => {
                 expect(then).to.have.not.been.called;
 

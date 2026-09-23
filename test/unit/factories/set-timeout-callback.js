@@ -62,6 +62,21 @@ describe('createSetTimeoutCallback()', () => {
                 expect(setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId)).to.be.undefined;
             });
 
+            it('should clamp the delay passed to setTimeout() to the maximum supported by the native implementation', () => {
+                const farExpected = performance.now() + 2147483647 + 1000;
+
+                setTimeoutCallback(farExpected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);
+
+                expect(setTimeout).to.have.been.calledOnceWith(
+                    setTimeoutCallback,
+                    2147483647,
+                    farExpected,
+                    identifiersAndResolvers,
+                    resolveSetResponseResultPromise,
+                    timerId
+                );
+            });
+
             describe('after invoking the callback', () => {
                 beforeEach(() => {
                     setTimeoutCallback(expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId);

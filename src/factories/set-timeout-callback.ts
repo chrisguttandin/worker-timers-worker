@@ -1,3 +1,4 @@
+import { clampNativeDelay } from '../functions/sanitize-delay';
 import { TResolveSetResponseResultPromise } from '../types';
 
 export const createSetTimeoutCallback = (performance: Pick<Performance, 'now'>, setTimeout: (typeof globalThis)['setTimeout']) => {
@@ -11,7 +12,14 @@ export const createSetTimeoutCallback = (performance: Pick<Performance, 'now'>, 
 
         if (remainingDelay > 0) {
             identifiersAndResolvers.set(timerId, [
-                setTimeout(setTimeoutCallback, remainingDelay, expected, identifiersAndResolvers, resolveSetResponseResultPromise, timerId),
+                setTimeout(
+                    setTimeoutCallback,
+                    clampNativeDelay(remainingDelay),
+                    expected,
+                    identifiersAndResolvers,
+                    resolveSetResponseResultPromise,
+                    timerId
+                ),
                 resolveSetResponseResultPromise
             ]);
         } else {

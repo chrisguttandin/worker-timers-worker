@@ -11,7 +11,7 @@ describe('createSetTimer()', () => {
 
     beforeEach(() => {
         identifiersAndResolvers = new Map();
-        performance = { now: vi.fn(), timeOrigin: Math.floor(Math.random() * 1000) };
+        performance = { now: vi.fn() };
         setTimeout = vi.fn();
         setTimeoutCallback = vi.fn();
         timeoutId = Math.floor(Math.random() * 1000);
@@ -40,8 +40,8 @@ describe('createSetTimer()', () => {
 
             expect(setTimeout).to.have.been.calledOnceWith(
                 setTimeoutCallback,
-                delay + nowAndOrigin - performance.timeOrigin - performance.now(),
-                delay + nowAndOrigin - performance.timeOrigin,
+                delay,
+                performance.now() + delay,
                 identifiersAndResolvers,
                 identifiersAndResolvers.get(timerId)[1],
                 timerId

@@ -199,6 +199,41 @@ describe('module', () => {
 
             return promise;
         });
+
+        it('should postpone a function for the given delay if the clock of the page lags behind', () => {
+            const { promise, resolve } = Promise.withResolvers();
+            const before = performance.now();
+
+            worker.addEventListener(
+                'message',
+                ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: 18,
+                        result: true
+                    });
+
+                    const elapsed = performance.now() - before;
+
+                    expect(elapsed).to.be.at.least(100);
+
+                    resolve();
+                },
+                { once: true }
+            );
+            worker.postMessage({
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    // This simulates a page whose clock lags behind the clock of the worker which happens on macOS when the worker gets created after the computer slept.
+                    now: performance.timeOrigin + performance.now() - 60000,
+                    timerId,
+                    timerType
+                }
+            });
+
+            return promise;
+        });
     });
 
     describe('setTimeout()', () => {
@@ -234,6 +269,76 @@ describe('module', () => {
                 params: {
                     delay: 100,
                     now: performance.timeOrigin + performance.now(),
+                    timerId,
+                    timerType
+                }
+            });
+
+            return promise;
+        });
+
+        it('should postpone a function for the given delay if the clock of the page lags behind', () => {
+            const { promise, resolve } = Promise.withResolvers();
+            const before = performance.now();
+
+            worker.addEventListener(
+                'message',
+                ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: 18,
+                        result: true
+                    });
+
+                    const elapsed = performance.now() - before;
+
+                    expect(elapsed).to.be.at.least(100);
+
+                    resolve();
+                },
+                { once: true }
+            );
+            worker.postMessage({
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    // This simulates a page whose clock lags behind the clock of the worker which happens on macOS when the worker gets created after the computer slept.
+                    now: performance.timeOrigin + performance.now() - 60000,
+                    timerId,
+                    timerType
+                }
+            });
+
+            return promise;
+        });
+
+        it('should not postpone a function much longer than the given delay if the clock of the page runs ahead', () => {
+            const { promise, resolve } = Promise.withResolvers();
+            const before = performance.now();
+
+            worker.addEventListener(
+                'message',
+                ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: 18,
+                        result: true
+                    });
+
+                    const elapsed = performance.now() - before;
+
+                    expect(elapsed).to.be.below(1000);
+
+                    resolve();
+                },
+                { once: true }
+            );
+            worker.postMessage({
+                id: 18,
+                method: 'set',
+                params: {
+                    delay: 100,
+                    // This simulates a page whose clock runs ahead of the clock of the worker.
+                    now: performance.timeOrigin + performance.now() + 60000,
                     timerId,
                     timerType
                 }
